@@ -8,18 +8,11 @@
 
 package ch.unifr.marcovr.GraphTransformer.gxl;
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -55,13 +48,13 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "attr"
+    "attributes"
 })
 @XmlRootElement(name = "node")
 public class Node {
 
-    @XmlElement(required = true)
-    private List<Node.Attr> attr;
+    @XmlElement(name = "attr", required = true)
+    private List<Node.Attr> attributes;
     @XmlAttribute(name = "id", required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -69,13 +62,13 @@ public class Node {
     private String id;
 
     /**
-     * Gets the value of the attr property.
+     * Gets the value of the attributes property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the attr property.
+     * This is why there is not a <CODE>set</CODE> method for the attributes property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
@@ -91,10 +84,10 @@ public class Node {
      * 
      */
     public List<Node.Attr> getAttributes() {
-        if (attr == null) {
-            attr = new ArrayList<Node.Attr>();
+        if (attributes == null) {
+            attributes = new ArrayList<Node.Attr>();
         }
-        return this.attr;
+        return this.attributes;
     }
 
     /**

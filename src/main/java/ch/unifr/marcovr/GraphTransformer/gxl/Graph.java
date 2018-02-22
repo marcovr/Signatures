@@ -48,17 +48,17 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-        "attr",
-        "node",
+        "attributes",
+        "nodes",
         "edges"
 })
 @XmlRootElement(name = "graph")
 public class Graph {
 
     @XmlElement(name = "attr")
-    private List<Attr> attr;
+    private List<Attribute> attributes;
     @XmlElement(name = "node")
-    private List<Node> node;
+    private List<Node> nodes;
     @XmlElement(name = "edge")
     private List<Edge> edges;
     @XmlAttribute(name = "id", required = true)
@@ -73,13 +73,13 @@ public class Graph {
     private String edgemode;
 
     /**
-     * Gets the value of the attr property.
+     * Gets the value of the attributes property.
      *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the attr property.
+     * This is why there is not a <CODE>set</CODE> method for the attributes property.
      *
      * <p>
      * For example, to add a new item, do as follows:
@@ -90,25 +90,25 @@ public class Graph {
      *
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Attr }
+     * {@link Attribute }
      *
      *
      */
-    public List<Attr> getAttributes() {
-        if (attr == null) {
-            attr = new ArrayList<Attr>();
+    public List<Attribute> getAttributes() {
+        if (attributes == null) {
+            attributes = new ArrayList<Attribute>();
         }
-        return this.attr;
+        return this.attributes;
     }
 
     /**
-     * Gets the value of the node property.
+     * Gets the value of the nodes property.
      *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the node property.
+     * This is why there is not a <CODE>set</CODE> method for the nodes property.
      *
      * <p>
      * For example, to add a new item, do as follows:
@@ -124,10 +124,10 @@ public class Graph {
      *
      */
     public List<Node> getNodes() {
-        if (node == null) {
-            node = new ArrayList<Node>();
+        if (nodes == null) {
+            nodes = new ArrayList<Node>();
         }
-        return this.node;
+        return this.nodes;
     }
 
     /**
