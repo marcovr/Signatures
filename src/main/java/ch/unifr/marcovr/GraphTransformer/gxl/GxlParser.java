@@ -11,21 +11,24 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+/**
+ * Provides methods to read and write .gxl files.
+ */
 public class GxlParser {
 
     /**
-     * Reads a .gxl file and creates a GxlRoot object from it
+     * Reads a .gxl file and creates a GxlRoot object from it.
      *
      * @param filePath .gxl file to read
      * @return gxl object
      */
     public static GxlRoot readGXL(String filePath) throws JAXBException, IOException, XMLStreamException {
-        try (FileInputStream xmlFile = new FileInputStream(filePath)) {
+        try (FileInputStream gxlFile = new FileInputStream(filePath)) {
 
             // create reader which ignores DTD
             XMLInputFactory factory = XMLInputFactory.newFactory();
             factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
-            XMLStreamReader reader = factory.createXMLStreamReader(xmlFile);
+            XMLStreamReader reader = factory.createXMLStreamReader(gxlFile);
 
             // create Unmarshaller and unmarshal .gxl file
             JAXBContext jaxb = JAXBContext.newInstance(GxlRoot.class);
@@ -35,13 +38,13 @@ public class GxlParser {
     }
 
     /**
-     * Writes a GxlRoot object into a .gxl file
+     * Writes a GxlRoot object into a .gxl file.
      *
      * @param gxlRoot gxl object to write
      * @param filePath .gxl file to write to
      */
     public static void writeGXL(GxlRoot gxlRoot, String filePath) throws IOException, JAXBException {
-        try (FileOutputStream adrFile = new FileOutputStream(filePath)) {
+        try (FileOutputStream gxlFile = new FileOutputStream(filePath)) {
 
             JAXBContext ctx = JAXBContext.newInstance(GxlRoot.class);
             Marshaller marshaller = ctx.createMarshaller();
@@ -53,7 +56,7 @@ public class GxlParser {
                     "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                             "<!DOCTYPE gxl SYSTEM \"http://www.gupro.de/GXL/gxl-1.0.dtd\">");
 
-            marshaller.marshal(gxlRoot, adrFile);
+            marshaller.marshal(gxlRoot, gxlFile);
         }
     }
 }

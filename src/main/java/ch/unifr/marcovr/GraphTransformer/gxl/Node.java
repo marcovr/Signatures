@@ -8,9 +8,11 @@
 
 package ch.unifr.marcovr.GraphTransformer.gxl;
 
+import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,6 +62,8 @@ public class Node {
     @XmlID
     @XmlSchemaType(name = "ID")
     private String id;
+    @XmlTransient
+    private Point2D location;
 
     /**
      * Gets the value of the attributes property.
@@ -112,6 +116,32 @@ public class Node {
      */
     public void setId(String value) {
         this.id = value;
+    }
+
+    /**
+     * Gets the location of the node.
+     *
+     * @return {@link Point2D} representing the location
+     */
+    public Point2D getLocation() {
+        return location;
+    }
+
+    /**
+     * Gets called after the object is fully created. Initializes the location field.
+     */
+    void afterUnmarshal(Unmarshaller u, Object parent) {
+        float x = 0, y = 0;
+        for (Attr attribute : attributes) {
+            if (attribute.name.equals("x")) {
+                x = attribute._float;
+            }
+            else if (attribute.name.equals("y")) {
+                y = attribute._float;
+            }
+        }
+
+        location = new Point2D.Float(x, y);
     }
 
 
