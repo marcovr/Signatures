@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- generated from "http://www.gupro.de/GXL/gxl-1.0.dtd" with Visual Studio 2017 v15.5.6, then edited manually -->
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="gxl">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="graph" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="graph">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="attr" />
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="node" />
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="edge" />
+      </xs:sequence>
+      <xs:attribute name="id" type="xs:ID" use="required" />
+      <xs:attribute default="false" name="edgeids" type="xs:boolean" />
+      <xs:attribute default="directed" name="edgemode">
+        <xs:simpleType>
+          <xs:restriction base="xs:NMTOKEN">
+            <xs:enumeration value="directed" />
+            <xs:enumeration value="undirected" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="node">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="2" maxOccurs="2" name="attr">
+		  <xs:complexType>
+			<xs:sequence>
+			  <xs:element name="float" type="xs:float" />
+			</xs:sequence>
+			<xs:attribute name="name" type="xs:NMTOKEN" use="required" />
+		  </xs:complexType>
+		</xs:element>
+      </xs:sequence>
+      <xs:attribute name="id" type="xs:ID" use="required" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="edge">
+    <xs:complexType>
+      <xs:attribute name="id" type="xs:ID" />
+      <xs:attribute name="from" type="xs:IDREF" use="required" />
+      <xs:attribute name="to" type="xs:IDREF" use="required" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="attr">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="attr" />
+        <xs:choice>
+          <xs:element name="bool" type="xs:boolean" />
+          <xs:element name="int" type="xs:int" />
+          <xs:element name="float" type="xs:float" />
+          <xs:element name="str" type="xs:string" />
+        </xs:choice>
+      </xs:sequence>
+      <xs:attribute name="id" type="xs:ID" />
+      <xs:attribute name="name" type="xs:NMTOKEN" use="required" />
+      <xs:attribute name="kind" type="xs:NMTOKEN" />
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
