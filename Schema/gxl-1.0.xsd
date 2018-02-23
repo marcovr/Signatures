@@ -30,14 +30,7 @@
   <xs:element name="node">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="2" maxOccurs="2" name="attr">
-		  <xs:complexType>
-			<xs:sequence>
-			  <xs:element name="float" type="xs:float" />
-			</xs:sequence>
-			<xs:attribute name="name" type="xs:NMTOKEN" use="required" />
-		  </xs:complexType>
-		</xs:element>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="attr" />
       </xs:sequence>
       <xs:attribute name="id" type="xs:ID" use="required" />
     </xs:complexType>
