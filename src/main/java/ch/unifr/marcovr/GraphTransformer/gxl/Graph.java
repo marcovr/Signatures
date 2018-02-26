@@ -239,4 +239,21 @@ public class Graph {
         this.edgemode = value;
     }
 
+    /**
+     * Performs a shallow copy of the graph object.
+     * Attributes, Nodes and Edges are only copied by reference.
+     *
+     * @return the copied {@link Graph}
+     */
+    public Graph shallowCopy() {
+        Graph graph = new Graph();
+        graph.id = id;
+        graph.edgeids = edgeids;
+        graph.edgemode = edgemode;
+        graph.attributes = new ArrayList<>(attributes);
+        graph.nodes = new ArrayList<>(nodes);
+        graph.edges = new ArrayList<>(edges);
+
+        return graph;
+    }
 }

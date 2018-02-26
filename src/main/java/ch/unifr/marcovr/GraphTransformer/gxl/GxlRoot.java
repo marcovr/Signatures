@@ -64,4 +64,16 @@ public class GxlRoot {
         this.graph = value;
     }
 
+    /**
+     * Performs a shallow copy of the gxl object.
+     * Attributes, Nodes and Edges are only copied by reference.
+     *
+     * @return the copied {@link GxlRoot}
+     */
+    public GxlRoot shallowCopy() {
+        GxlRoot gxl = new GxlRoot();
+        gxl.setGraph(graph.shallowCopy());
+        return gxl;
+    }
+
 }
