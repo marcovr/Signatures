@@ -12,7 +12,7 @@ public class Main {
 
     public static void main(String[] args) throws IOException, XMLStreamException, JAXBException {
         GxlRoot gxl = GxlParser.readGXL("0001_f_001.gxl");
-        GxlVisualizer.visualize(gxl);
+        GxlVisualizer.show(gxl, "Original");
         //GxlParser.writeGXL(gxl, "out.gxl");
     }
 

@@ -32,7 +32,17 @@ public class GxlVisualizer {
      *
      * @param gxl gxl object to visualize
      */
-    public static void visualize(GxlRoot gxl) {
+    public static void show(GxlRoot gxl) {
+        show(gxl, "Graph Visualizer");
+    }
+
+    /**
+     * Shows a graph in a resizeable JFrame.
+     *
+     * @param gxl   gxl object to visualize
+     * @param title window title
+     */
+    public static void show(GxlRoot gxl, String title) {
         GxlVisualizer visualizer = new GxlVisualizer(gxl);
 
         // create dynamically redrawing panel
@@ -45,7 +55,7 @@ public class GxlVisualizer {
         panel.setPreferredSize(new Dimension(WIDTH, HEIGHT));
 
         // show window
-        JFrame frame = new JFrame("Graph Visualizer");
+        JFrame frame = new JFrame(title);
         frame.setContentPane(panel);
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         frame.pack();
@@ -55,22 +65,22 @@ public class GxlVisualizer {
     /**
      * Writes a graph into an image file.
      *
-     * @param gxl gxl object to visualize
+     * @param gxl      gxl object to visualize
      * @param filePath image path to write to
      */
-    public static void visualize(GxlRoot gxl, String filePath) throws IOException {
-        visualize(gxl, WIDTH, HEIGHT, filePath);
+    public static void toImage(GxlRoot gxl, String filePath) throws IOException {
+        toImage(gxl, WIDTH, HEIGHT, filePath);
     }
 
     /**
      * Writes a graph into an image file.
      *
-     * @param gxl gxl object to visualize
-     * @param width size of image
-     * @param height size of image
+     * @param gxl      gxl object to visualize
+     * @param width    size of image
+     * @param height   size of image
      * @param filePath image path to write to
      */
-    public static void visualize(GxlRoot gxl, int width, int height, String filePath) throws IOException {
+    public static void toImage(GxlRoot gxl, int width, int height, String filePath) throws IOException {
         GxlVisualizer visualizer = new GxlVisualizer(gxl);
 
         // create image
@@ -85,8 +95,8 @@ public class GxlVisualizer {
     /**
      * Paints the stored graph using the provided graphics object.
      *
-     * @param g graphics object to paint with
-     * @param width size of image
+     * @param g      graphics object to paint with
+     * @param width  size of image
      * @param height size of image
      */
     private void paintImage(Graphics2D g, int width, int height) {
@@ -116,7 +126,7 @@ public class GxlVisualizer {
     /**
      * Calculates radius, scale and offsetX/Y to paint the stored graph in a reasonable way.
      *
-     * @param width size of image
+     * @param width  size of image
      * @param height size of image
      */
     private void calculateNormalisation(int width, int height) {
@@ -161,8 +171,8 @@ public class GxlVisualizer {
      * @return transformed Point
      */
     private Point transform(Point2D p) {
-        int x = (int) (p.getX() * scale + offsetX);
-        int y = (int) (p.getY() * scale + offsetY);
+        int x = (int) Math.round(p.getX() * scale + offsetX);
+        int y = (int) Math.round(p.getY() * scale + offsetY);
         return new Point(x, y);
     }
 
