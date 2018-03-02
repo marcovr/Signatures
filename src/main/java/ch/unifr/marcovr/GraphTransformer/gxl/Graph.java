@@ -250,7 +250,9 @@ public class Graph {
         graph.id = id;
         graph.edgeids = edgeids;
         graph.edgemode = edgemode;
-        graph.attributes = new ArrayList<>(attributes);
+        if (attributes != null) {
+            graph.attributes = new ArrayList<>(attributes);
+        }
         graph.nodes = new ArrayList<>(nodes);
         graph.edges = new ArrayList<>(edges);
 
