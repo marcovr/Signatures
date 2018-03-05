@@ -29,6 +29,9 @@ public class Main {
             case "transform":
                 transform(subArgs);
                 break;
+            case "batchtransform":
+                BatchTransform.transform(subArgs);
+                break;
             case "image":
                 image(subArgs);
                 break;
@@ -44,9 +47,10 @@ public class Main {
     private static void usage() {
         System.out.printf("Usage: graphtransform COMMAND ARGS%n%n" +
                 "COMMAND: transform, toimage or show%n" +
-                "       - transform: applies transformation method on graph%n" +
-                "       - toimage:   saves graph as image%n" +
-                "       - show:      shows graph in a window%n" +
+                "       - transform:      applies transformation method on graph%n" +
+                "       - batchtransform: transforms multiple graphs with all kinds of transforms%n" +
+                "       - toimage:        saves graph as image%n" +
+                "       - show:           shows graph in a window%n" +
                 "ARGS:    one or more arguments, depends on command%n");
     }
 
