@@ -122,7 +122,7 @@ public class Node {
      */
     void afterUnmarshal(Unmarshaller u, Object parent) {
         float x = 0, y = 0;
-        for (Attribute attribute : attributes) {
+        for (Attribute attribute : getAttributes()) {
             if (attribute.getName().equals("x")) {
                 x = attribute.getFloat();
             }

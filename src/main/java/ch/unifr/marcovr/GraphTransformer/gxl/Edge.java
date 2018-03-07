@@ -162,4 +162,23 @@ public class Edge {
         this.to = value;
     }
 
+    /**
+     * Gets called before the object is serialized. Updates / creates length attribute.
+     */
+    void beforeMarshal(Marshaller marshaller) {
+        float length = (float) from.getLocation().distance(to.getLocation());
+
+        for (Attribute attribute : getAttributes()) {
+            if (attribute.getName().equals("length")) {
+                attribute.setFloat(length);
+                return;
+            }
+        }
+
+        Attribute lengthAttr = new Attribute();
+        lengthAttr.setName("length");
+        lengthAttr.setFloat(length);
+        attributes.add(lengthAttr);
+    }
+
 }
