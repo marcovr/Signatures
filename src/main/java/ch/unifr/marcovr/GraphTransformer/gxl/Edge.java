@@ -8,9 +8,12 @@
 
 package ch.unifr.marcovr.GraphTransformer.gxl;
 
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -22,6 +25,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * &lt;complexType>
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element ref="attr" maxOccurs="unbounded" minOccurs="0"/>
+ *       &lt;/sequence>
  *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" />
  *       &lt;attribute name="from" use="required" type="{http://www.w3.org/2001/XMLSchema}IDREF" />
  *       &lt;attribute name="to" use="required" type="{http://www.w3.org/2001/XMLSchema}IDREF" />
@@ -33,10 +39,14 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "")
+@XmlType(name = "", propOrder = {
+        "attributes"
+})
 @XmlRootElement(name = "edge")
 public class Edge {
 
+    @XmlElement(name = "attr")
+    private List<Attribute> attributes;
     @XmlAttribute(name = "id")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -50,6 +60,35 @@ public class Edge {
     @XmlIDREF
     @XmlSchemaType(name = "IDREF")
     private Node to;
+
+    /**
+     * Gets the value of the attributes property.
+     *
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the attributes property.
+     *
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getAttributes().add(newItem);
+     * </pre>
+     *
+     *
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link Attribute }
+     *
+     *
+     */
+    public List<Attribute> getAttributes() {
+        if (attributes == null) {
+            attributes = new ArrayList<Attribute>();
+        }
+        return this.attributes;
+    }
 
     /**
      * Gets the value of the id property.
