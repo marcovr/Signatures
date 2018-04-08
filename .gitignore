@@ -1,0 +1,11 @@
+# PyCharm
+.idea/
+
+# Python
+venv/
+__pycache__/
+
+# gxl files
+*.gxl
+
+data/
