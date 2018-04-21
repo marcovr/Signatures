@@ -26,6 +26,10 @@ public class Main {
     private static Path out;
     private static Path tmp;
 
+    /**
+     * Main entry point for GEDWrapper.
+     * @param args command line arguments
+     */
     public static void main(String[] args) throws IOException, URISyntaxException, InterruptedException {
         if (args.length < 3) {
             usage();
@@ -49,6 +53,12 @@ public class Main {
                 "REF:    reference graphs%n");
     }
 
+    /**
+     * Create working directory and build paths.
+     *
+     * @param input path of input directory
+     * @param output path of output directory
+     */
     private static void init(String input, String output) throws IOException, URISyntaxException {
         String path = Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
         Path source = Paths.get(new File(path).getParent());
@@ -66,18 +76,26 @@ public class Main {
         Files.createDirectories(res);
     }
 
+    /**
+     * Set up and run GED.
+     *
+     * @param references list of reference signature names
+     */
     private static void run(List<String> references) throws IOException, InterruptedException {
         Stream<String> fs = Files.list(data).map(p -> p.getFileName().toString());
         List<String> files = fs.collect(Collectors.toList());
 
         createPropFile();
-        createConfFile(sig, files);
-        createConfFile(ref, references);
+        createCxlFile(sig, files);
+        createCxlFile(ref, references);
 
         exec();
         getResult();
     }
 
+    /**
+     * Write main configuration file for GED.
+     */
     private static void createPropFile() throws IOException {
         try (BufferedReader reader = Files.newBufferedReader(defaultProp);
              BufferedWriter writer = Files.newBufferedWriter(prop)) {
@@ -105,9 +123,15 @@ public class Main {
         }
     }
 
-    private static void createConfFile(Path which, List<String> files) throws IOException {
+    /**
+     * Write cxl configuration file for GED.
+     *
+     * @param path where to write file to
+     * @param files list of files to include in cxl
+     */
+    private static void createCxlFile(Path path, List<String> files) throws IOException {
         int count = files.size();
-        try (BufferedWriter writer = Files.newBufferedWriter(which)) {
+        try (BufferedWriter writer = Files.newBufferedWriter(path)) {
             writer.write("<?xml version=\"1.0\"?>\n<GraphCollection>\n<l1 count=\"" + count + "\">\n");
             for (String file : files) {
                 file = new File(file).getName();
@@ -117,6 +141,9 @@ public class Main {
         }
     }
 
+    /**
+     * Create output directory and move result file.
+     */
     private static void getResult() throws IOException {
         if (out.getParent() != null) {
             Files.createDirectories(out.getParent());
@@ -125,6 +152,9 @@ public class Main {
         Files.move(resFile, out, StandardCopyOption.REPLACE_EXISTING);
     }
 
+    /**
+     * Run GED. A new process is created to pass options and set the working directory.
+     */
     private static void exec() throws IOException, InterruptedException {
         String javaHome = System.getProperty("java.home");
         String javaBin = Paths.get(javaHome, "bin", "java").toString();
