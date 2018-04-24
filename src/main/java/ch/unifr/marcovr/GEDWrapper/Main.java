@@ -1,90 +1,150 @@
 package ch.unifr.marcovr.GEDWrapper;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.stream.IntStream;
 
 public class Main {
 
-    private static Path jar;
+    private static Path GEDJar;
     private static Path defaultProp;
     private static Path prop;
     private static Path ref;
     private static Path sig;
-    private static Path data;
+    private static Path dataDir;
     private static Path res;
     private static Path out;
-    private static Path tmp;
+    private static Path tmpDir;
+
+    private static List<Path> files;
+    private static List<Path> references;
+
+    private static boolean debug;
 
     /**
      * Main entry point for GEDWrapper.
      * @param args command line arguments
      */
     public static void main(String[] args) throws IOException, URISyntaxException, InterruptedException {
-        if (args.length < 3) {
+        List<Integer> refIndexes = null;
+        out = Paths.get("out.ged");
+
+        // extract options
+        GetOpt g;
+        try {
+            g = new GetOpt(args, "r:R:o:d");
+        } catch (GetOpt.OptException e) {
             usage();
             return;
         }
 
-        init(args[0], args[1]);
+        // handle options
+        for (GetOpt.Option option : g.getOpts()) {
+            switch (option.opt) {
+                case "-r":
+                    int n = Integer.parseInt(option.arg);
+                    refIndexes = IntStream.range(0, n).boxed().collect(Collectors.toList());
+                    break;
+                case "-R":
+                    refIndexes = IntStream.range(0, option.arg.length())
+                            .filter(i -> option.arg.charAt(i) == '1')
+                            .boxed().collect(Collectors.toList());
+                    break;
+                case "-o":
+                    out = Paths.get(option.arg);
+                    break;
+                case "-d":
+                    debug = true;
+                    break;
+                default:
+                    usage();
+                    return;
+            }
+        }
+
+        if (g.getArgs().isEmpty() || refIndexes == null) {
+            usage();
+            return;
+        }
+
+        init(g.getArgs(), refIndexes);
+        if (debug) {
+            System.out.println(tmpDir);
+        }
+
         try {
-            List<String > references = Arrays.asList(Arrays.copyOfRange(args, 2, args.length));
-            run(references);
+            run();
         }
         finally {
-            Util.deleteDir(tmp);
+            if (!debug) {
+                Util.deleteDir(tmpDir);
+            }
         }
     }
 
+    // example: java -jar gedwrapper.jar -r 10 data
     private static void usage() {
-        System.out.printf("Usage: gedwrapper INPUT OUTPUT REF...%n%n" +
-                "INPUT:  directory containing graphs%n" +
-                "OUTPUT: output file%n" +
-                "REF:    reference graphs%n");
+        System.out.printf("Usage: gedwrapper (-r INT | -R FLAGS) [OPTIONS] INPUT...%n%n" +
+                "-r INT      number indicating amount of reference signatures (0 to N)%n" +
+                "-R FLAGS    flags specifying reference signatures (1 = reference, 0 = non r.)%n%n" +
+                "OPTIONS:%n" +
+                "-o FILE     output file path. default is 'out.ged'%n%n" +
+                "INPUT       directory containing graph files or list of graph files%n" +
+                "   Notice:  all files need to be in the same directory%n");
     }
 
     /**
-     * Create working directory and build paths.
+     * Create working directory, build paths and create file lists.
      *
-     * @param input path of input directory
-     * @param output path of output directory
+     * @param args arguments representing data source
+     * @param refIndexes indexes indicating reference files
      */
-    private static void init(String input, String output) throws IOException, URISyntaxException {
+    private static void init(List<String> args, List<Integer> refIndexes) throws IOException, URISyntaxException {
+        // get location of this jar
         String path = Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
         Path source = Paths.get(new File(path).getParent());
 
-        tmp = Files.createTempDirectory("ged");
-        jar = source.resolve("GED.jar");
+        tmpDir = Files.createTempDirectory("ged");
+        GEDJar = source.resolve("GED.jar");
         defaultProp = source.resolve("default.prop");
-        prop = tmp.resolve("tmp.prop");
-        ref = tmp.resolve("ref.cxl");
-        sig = tmp.resolve("sig.cxl");
-        data = Paths.get(input);
-        res = tmp.resolve("res");
-        out = Paths.get(output);
+        prop = tmpDir.resolve("tmp.prop");
+        ref = tmpDir.resolve("ref.cxl");
+        sig = tmpDir.resolve("sig.cxl");
+        res = tmpDir.resolve("res");
 
         Files.createDirectories(res);
+
+        // get file list
+        files = args.stream().map(arg -> Paths.get(arg)).collect(Collectors.toList());
+        if (files.size() == 1 && Files.isDirectory(files.get(0))) {
+            files = Files.list(files.get(0)).collect(Collectors.toList());
+        }
+
+        // get reference list from indexes
+        references = refIndexes.stream().map(files::get).collect(Collectors.toList());
+
+        // get data path
+        dataDir = files.get(0).getParent();
+        if (dataDir == null) {
+            dataDir = Paths.get(".");
+        }
+
+        if (!Files.exists(GEDJar)) {
+            System.err.println("GED library missing: " + GEDJar.toString());
+            System.exit(1);
+        }
     }
 
     /**
      * Set up and run GED.
-     *
-     * @param references list of reference signature names
      */
-    private static void run(List<String> references) throws IOException, InterruptedException {
-        Stream<String> fs = Files.list(data).map(p -> p.getFileName().toString());
-        List<String> files = fs.collect(Collectors.toList());
-
+    private static void run() throws IOException, InterruptedException {
         createPropFile();
         createCxlFile(sig, files);
         createCxlFile(ref, references);
@@ -105,7 +165,7 @@ public class Main {
                 if (line.equals("$PATHS")) {
                     String s = ref.getFileName().toString();
                     String t = sig.getFileName().toString();
-                    String p = data.toAbsolutePath().toString() + '/';
+                    String p = dataDir.toAbsolutePath().toString() + '/';
                     String r = res.toString() + '/';
 
                     if (Util.isWindows()) {
@@ -129,13 +189,12 @@ public class Main {
      * @param path where to write file to
      * @param files list of files to include in cxl
      */
-    private static void createCxlFile(Path path, List<String> files) throws IOException {
+    private static void createCxlFile(Path path, List<Path> files) throws IOException {
         int count = files.size();
         try (BufferedWriter writer = Files.newBufferedWriter(path)) {
             writer.write("<?xml version=\"1.0\"?>\n<GraphCollection>\n<l1 count=\"" + count + "\">\n");
-            for (String file : files) {
-                file = new File(file).getName();
-                writer.write("<print file=\"" + file + "\" class=\"0001\"/>\n");
+            for (Path file : files) {
+                writer.write("<print file=\"" + file.getFileName() + "\" class=\"0001\"/>\n");
             }
             writer.write("</l1>\n</GraphCollection>\n");
         }
@@ -145,10 +204,15 @@ public class Main {
      * Create output directory and move result file.
      */
     private static void getResult() throws IOException {
+        Path resFile = res.resolve("tmp_ln.ged");
+        if (!Files.exists(resFile)) {
+            System.out.println("No output file found");
+            return;
+        }
+
         if (out.getParent() != null) {
             Files.createDirectories(out.getParent());
         }
-        Path resFile = res.resolve("tmp_ln.ged");
         Files.move(resFile, out, StandardCopyOption.REPLACE_EXISTING);
     }
 
@@ -158,12 +222,12 @@ public class Main {
     private static void exec() throws IOException, InterruptedException {
         String javaHome = System.getProperty("java.home");
         String javaBin = Paths.get(javaHome, "bin", "java").toString();
-        String jarName = jar.toString();
+        String jarName = GEDJar.toString();
         String className = "algorithms.GraphMatching";
         String propName = prop.getFileName().toString();
 
         String[] args = new String[]{javaBin, "-Xms4096m", "-Xmx4096m", "-Xss8192k", "-XX:ParallelGCThreads=4", "-XX:ConcGCThreads=1", "-cp", jarName, className, propName};
-        Util.runProcess(args, tmp);
+        Util.runProcess(args, tmpDir);
     }
 
 }
