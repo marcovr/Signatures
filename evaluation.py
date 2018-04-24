@@ -56,6 +56,45 @@ def extract_vector(matrix, references):
     return vector
 
 
+def extract_raw_vector(matrix, references):
+    """
+    Creates a distance vector of non-reference signatures to reference ones.
+    The values are not normalized.
+
+    :param matrix: distance matrix
+    :param references: list of reference indices
+    :return: distance vector
+
+    """
+    w = len(matrix[0])
+    n = len(references)
+
+    # deepcopy
+    matrix = [row.copy() for row in matrix]
+
+    # Remove non-reference rows
+    for row in reversed(range(0, n)):
+        if row not in references:
+            matrix.pop(row)
+
+    # move reference columns to front
+    i = 0
+    for col in references:
+        for row in matrix:
+            row.insert(i, row.pop(col))
+        i += 1
+
+    # create distance vector
+    vector = []
+    for x in range(n, w):
+        minimum = matrix[0][x]
+        for y in range(1, n):
+            minimum = min(minimum, matrix[y][x])
+        vector.append(minimum)
+
+    return vector
+
+
 def create_table(vector, ground_truth):
     """
     Creates a table with each row containing:
@@ -63,7 +102,7 @@ def create_table(vector, ground_truth):
 
     :param vector: distance vector
     :param ground_truth: list of 0 and 1 indicating genuine signatures
-    :return: information table
+    :return: evaluation table
     """
     tuples = zip(vector, ground_truth)
     table = list(map(list, tuples))

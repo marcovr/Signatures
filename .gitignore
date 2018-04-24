@@ -9,3 +9,4 @@ __pycache__/
 *.gxl
 
 data/
+*.png
