@@ -26,6 +26,7 @@ public class Main {
     private static List<Path> references;
 
     private static boolean debug;
+    private static boolean reorder;
 
     /**
      * Main entry point for GEDWrapper.
@@ -38,7 +39,7 @@ public class Main {
         // extract options
         GetOpt g;
         try {
-            g = new GetOpt(args, "r:R:o:d");
+            g = new GetOpt(args, "r:R:o:fd");
         } catch (GetOpt.OptException e) {
             usage();
             return;
@@ -59,6 +60,9 @@ public class Main {
                 case "-o":
                     out = Paths.get(option.arg);
                     break;
+                case "-f":
+                    reorder = true;
+                    break;
                 case "-d":
                     debug = true;
                     break;
@@ -76,6 +80,7 @@ public class Main {
         init(g.getArgs(), refIndexes);
         if (debug) {
             System.out.println(tmpDir);
+            System.out.println(files.stream().map(Util::baseName).collect(Collectors.toList()));
         }
 
         try {
@@ -88,15 +93,17 @@ public class Main {
         }
     }
 
-    // example: java -jar gedwrapper.jar -r 10 data
+    // example: java -jar gedwrapper.jar -r 10 -f data
     private static void usage() {
         System.out.printf("Usage: gedwrapper (-r INT | -R FLAGS) [OPTIONS] INPUT...%n%n" +
                 "-r INT      number indicating amount of reference signatures (0 to N)%n" +
                 "-R FLAGS    flags specifying reference signatures (1 = reference, 0 = non r.)%n%n" +
                 "OPTIONS:%n" +
+                "-f          check file names for flags (f / g) to determine correct order.%n" +
+                "            (signatures are rearranged such that genuine ones are first)%n" +
                 "-o FILE     output file path. default is 'out.ged'%n%n" +
                 "INPUT       directory containing graph files or list of graph files%n" +
-                "   Notice:  all files need to be in the same directory%n");
+                "   Notice:  all files need to be in the same directory and correctly ordered%n");
     }
 
     /**
@@ -124,6 +131,17 @@ public class Main {
         files = args.stream().map(arg -> Paths.get(arg)).collect(Collectors.toList());
         if (files.size() == 1 && Files.isDirectory(files.get(0))) {
             files = Files.list(files.get(0)).collect(Collectors.toList());
+        }
+
+        // rearrange file names such that genuine ones are first
+        if (reorder) {
+            List<Path> ordered = files.stream()
+                    .filter(f -> Util.baseName(f).indexOf('g') >= 0)
+                    .collect(Collectors.toList());
+            ordered.addAll(files.stream()
+                    .filter(f -> Util.baseName(f).indexOf('f') >= 0)
+                    .collect(Collectors.toList()));
+            files = ordered;
         }
 
         // get reference list from indexes
@@ -226,7 +244,8 @@ public class Main {
         String className = "algorithms.GraphMatching";
         String propName = prop.getFileName().toString();
 
-        String[] args = new String[]{javaBin, "-Xms4096m", "-Xmx4096m", "-Xss8192k", "-XX:ParallelGCThreads=4", "-XX:ConcGCThreads=1", "-cp", jarName, className, propName};
+        String[] args = new String[]{javaBin, "-Xms4096m", "-Xmx4096m", "-Xss8192k",
+                "-XX:ParallelGCThreads=4", "-XX:ConcGCThreads=1", "-cp", jarName, className, propName};
         Util.runProcess(args, tmpDir);
     }
 

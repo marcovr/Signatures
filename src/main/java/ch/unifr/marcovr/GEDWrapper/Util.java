@@ -55,4 +55,16 @@ class Util {
         process.waitFor();
     }
 
+    /**
+     * Get file name without extension.
+     *
+     * @param path file to get base name from
+     * @return file name without extension
+     */
+    static String baseName(Path path) {
+        String str = path.getFileName().toString();
+        int i = str.lastIndexOf(".");
+        return i >= 0 ? str.substring(0, i) : str;
+    }
+
 }
