@@ -24,31 +24,31 @@ public class GetOpt {
 
         for (int i = 0; i < argv.length; i++) {
             String arg = argv[i];
-            if (arg.charAt(0) == '-') {
-                char[] chars = arg.substring(1).toCharArray();
-                for (char c : chars) {
-                    int j = options.indexOf(c);
-                    if (j >= 0) {
-                        if (options.length() > j + 1 && options.charAt(j + 1) == ':') {
-                            i++;
-                            if (i < argv.length) {
-                                opts.add(new Option("-" + c, argv[i]));
-                            }
-                            else {
-                                throw new OptException("missing argument: -" + c);
-                            }
-                        }
-                        else {
-                            opts.add(new Option("-" + c));
-                        }
-                    }
-                    else {
-                        throw new OptException("invalid option: -" + c);
-                    }
-                }
-            }
-            else {
+
+            // check for option
+            if (arg.charAt(0) != '-') {
                 args.add(arg);
+                continue;
+            }
+
+            char[] chars = arg.substring(1).toCharArray();
+            for (char c : chars) {
+                // check if option is expected
+                int j = options.indexOf(c);
+                if (j < 0) {
+                    throw new OptException("invalid option: -" + c);
+                }
+
+                // check if option requires argument
+                String optArg = null;
+                if (options.length() > j + 1 && options.charAt(j + 1) == ':') {
+                    if (++i >= argv.length) {
+                        throw new OptException("missing argument: -" + c);
+                    }
+                    optArg = argv[i];
+                }
+
+                opts.add(new Option("-" + c, optArg));
             }
         }
     }
@@ -74,10 +74,6 @@ public class GetOpt {
     public class Option {
         public String opt;
         public String arg;
-
-        public Option(String opt) {
-            this.opt = opt;
-        }
 
         public Option(String opt, String arg) {
             this.opt = opt;
