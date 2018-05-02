@@ -6,8 +6,6 @@ import plot
 
 
 # example: python run.py -r 10 -g 5 data
-
-
 def usage():
     print("usage: %s (-g INT | -G FLAGS) (-r INT | -R FLAGS) [OPTIONS] INPUT..." % sys.argv[0])
     print()
@@ -22,6 +20,7 @@ def usage():
     print("-p FILE     plot DET curve")
     print("-P FILE     plot distance vector distribution graph")
     print("   Notice:  graphs are written to FILE or shown if FILE is ''")
+    print("-l          use logarithmic scale (DET curve only)")
     print()
     print("-t          print evaluation table")
     print()
@@ -30,7 +29,7 @@ def usage():
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'g:G:r:R:p:P:t')
+        opts, args = getopt.getopt(sys.argv[1:], 'g:G:r:R:p:P:tl')
     except getopt.GetoptError:
         usage()
         sys.exit(2)
@@ -38,10 +37,13 @@ def main():
     reference = ground_truth = None
     show_table = False
     plot_dist = plot_det = None
+    log = False
 
     for opt, arg in opts:
         if opt == '-t':
             show_table = True
+        elif opt == '-l':
+                log = True
         elif opt == '-g':
             ground_truth = [1] * int(arg)
         elif opt == '-G':
@@ -90,7 +92,7 @@ def main():
             print("\t".join(map(str, row)))
 
     if plot_det is not None:
-        plot.plot_det(table, False, plot_det)
+        plot.plot_det(table, log, plot_det)
     if plot_dist is not None:
         vectors = [evaluation.extract_raw_vector(matrix, reference) for matrix in matrices]
         plot.plot_dist(vectors, ground_truth, plot_dist)
