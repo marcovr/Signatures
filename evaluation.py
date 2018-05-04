@@ -98,31 +98,35 @@ def extract_raw_vector(matrix, references):
 def create_table(vector, ground_truth):
     """
     Creates a table with each row containing:
-        [distance, genuine, true_positive, false_positive, true_pos_rate, false_pos_rate, false_neg_rate]
+        distance, genuine, true_positive, false_positive, true_pos_rate, false_pos_rate, false_neg_rate
 
     :param vector: distance vector
     :param ground_truth: list of 0 and 1 indicating genuine signatures
     :return: evaluation table
     """
-    tuples = zip(vector, ground_truth)
-    table = list(map(list, tuples))
-    table.sort()
+    tuples = list(zip(vector, ground_truth))
+    tuples.sort()
 
+    table = []
     n_genuine = sum(ground_truth)
     n_forgery = len(ground_truth) - n_genuine
     true_pos = false_pos = 0
-    for row in table:
-        is_genuine = row[1]
+    for (distance, is_genuine) in tuples:
         if is_genuine:
             true_pos += 1
         else:
             false_pos += 1
 
-        row.append(true_pos)
-        row.append(false_pos)
-        row.append(true_pos / n_genuine)
-        row.append(false_pos / n_forgery)
-        row.append(1 - true_pos / n_genuine)
+        row = {
+            "distance": distance,
+            "genuine": is_genuine,
+            "true_positive": true_pos,
+            "false_positive": false_pos,
+            "true_pos_rate": true_pos / n_genuine,
+            "false_pos_rate": false_pos / n_forgery,
+            "false_neg_rate": 1 - true_pos / n_genuine
+        }
+        table.append(row)
 
     return table
 
@@ -130,13 +134,11 @@ def create_table(vector, ground_truth):
 def get_eer(table):
     """Calculates the equal error rate (EER)."""
     n = len(table)
-    n_genuine = sum(row[1] for row in table)
+    n_genuine = sum(row["genuine"] for row in table)
 
     for row in table:
-        false_pos_rate = row[5]
-        false_neg_rate = row[6]
-        if false_neg_rate <= false_pos_rate:
-            true_pos = row[2]
-            false_pos = row[3]
-            eer = (n_genuine - true_pos + false_pos) / n
+        if row["false_neg_rate"] <= row["false_pos_rate"]:
+            tp = row["true_positive"]
+            fp = row["false_positive"]
+            eer = (n_genuine - tp + fp) / n
             return eer

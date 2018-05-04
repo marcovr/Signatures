@@ -2,7 +2,6 @@ import os
 import sys
 import getopt
 import evaluation
-import plot
 
 
 # example: python run.py -r 10 -g 5 data
@@ -86,16 +85,27 @@ def main():
 
     if show_table:
         print()
-        print("\t".join(["distance", "genuine", "true_positive", "false_positive",
-                         "true_pos_rate", "false_pos_rate", "false_neg_rate"]))
+        print("distance", "genuine", "true_positive", "false_positive",
+                         "true_pos_rate", "false_pos_rate", "false_neg_rate", sep="\t")
         for row in table:
-            print("\t".join(map(str, row)))
+            print(
+                str(row["distance"]),
+                str(row["genuine"]),
+                str(row["true_positive"]),
+                str(row["false_positive"]),
+                str(row["true_pos_rate"]),
+                str(row["false_pos_rate"]),
+                str(row["false_neg_rate"]),
+                sep="\t"
+            )
 
-    if plot_det is not None:
-        plot.plot_det(table, log, plot_det)
-    if plot_dist is not None:
-        vectors = [evaluation.extract_raw_vector(matrix, reference) for matrix in matrices]
-        plot.plot_dist(vectors, ground_truth, plot_dist)
+    if plot_det is not None or plot_dist is not None:
+        import plot
+        if plot_det is not None:
+            plot.plot_det(table, log, plot_det)
+        if plot_dist is not None:
+            vectors = [evaluation.extract_raw_vector(matrix, reference) for matrix in matrices]
+            plot.plot_dist(vectors, ground_truth, plot_dist)
 
 
 def to_indices(flags):

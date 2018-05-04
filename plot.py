@@ -53,8 +53,8 @@ def plot_det(table, log=False, file=''):
     :param log: use logarithmic scale
     :param file: plot output file (graph is shown if blank)
     """
-    fpr = [row[5] for row in table]
-    fnr = [row[6] for row in table]
+    fpr = [row["false_pos_rate"] for row in table]
+    fnr = [row["false_neg_rate"] for row in table]
 
     # create plot
     if log:
