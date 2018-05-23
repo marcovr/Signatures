@@ -17,13 +17,14 @@ def extract_vector(matrix, references):
 
     """
     w = len(matrix[0])
+    h = len(matrix)
     n = len(references)
 
     # deepcopy
     matrix = [row.copy() for row in matrix]
 
     # Remove non-reference rows
-    for row in reversed(range(0, n)):
+    for row in reversed(range(0, h)):
         if row not in references:
             matrix.pop(row)
 
