@@ -104,7 +104,7 @@ def main():
         if plot_det is not None:
             plot.plot_det(table, log, plot_det)
         if plot_dist is not None:
-            vectors = [evaluation.extract_raw_vector(matrix, reference) for matrix in matrices]
+            vectors = [evaluation.extract_vector(matrix, reference, False) for matrix in matrices]
             plot.plot_dist(vectors, ground_truth, plot_dist)
 
 

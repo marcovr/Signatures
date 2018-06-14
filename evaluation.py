@@ -6,13 +6,13 @@ def read_matrix(file):
     return matrix
 
 
-def extract_vector(matrix, references):
+def extract_vector(matrix, references, normalize=True):
     """
     Creates a distance vector of non-reference signatures to reference ones.
-    The values are normalized by the average distance.
 
     :param matrix: distance matrix
     :param references: list of reference indices
+    :param normalize: normalize values by the average distance (default true)
     :return: distance vector
 
     """
@@ -35,16 +35,19 @@ def extract_vector(matrix, references):
             row.insert(i, row.pop(col))
         i += 1
 
-    # calculate user normalization factor
-    min_sum = 0
-    for x in range(0, n):
-        minimum = 1
-        for y in range(0, n):
-            # skip distances to self
-            if x != y:
-                minimum = min(minimum, matrix[y][x])
-        min_sum += minimum
-    norm = min_sum / n
+    if normalize:
+        # calculate user normalization factor
+        min_sum = 0
+        for x in range(0, n):
+            minimum = 1
+            for y in range(0, n):
+                # skip distances to self
+                if x != y:
+                    minimum = min(minimum, matrix[y][x])
+            min_sum += minimum
+        norm = min_sum / n
+    else:
+        norm = 1
 
     # create normalized distance vector
     vector = []
@@ -52,45 +55,6 @@ def extract_vector(matrix, references):
         minimum = matrix[0][x] / norm
         for y in range(1, n):
             minimum = min(minimum, matrix[y][x] / norm)
-        vector.append(minimum)
-
-    return vector
-
-
-def extract_raw_vector(matrix, references):
-    """
-    Creates a distance vector of non-reference signatures to reference ones.
-    The values are not normalized.
-
-    :param matrix: distance matrix
-    :param references: list of reference indices
-    :return: distance vector
-
-    """
-    w = len(matrix[0])
-    n = len(references)
-
-    # deepcopy
-    matrix = [row.copy() for row in matrix]
-
-    # Remove non-reference rows
-    for row in reversed(range(0, n)):
-        if row not in references:
-            matrix.pop(row)
-
-    # move reference columns to front
-    i = 0
-    for col in references:
-        for row in matrix:
-            row.insert(i, row.pop(col))
-        i += 1
-
-    # create distance vector
-    vector = []
-    for x in range(n, w):
-        minimum = matrix[0][x]
-        for y in range(1, n):
-            minimum = min(minimum, matrix[y][x])
         vector.append(minimum)
 
     return vector
