@@ -1,0 +1,58 @@
+{
+    "general": {
+        "name": "Image to graph",
+        "description": "Transforms an image into a graph",
+        "developer": "Paul Maergner, Marco von Raumer",
+        "affiliation": "University of Fribourg",
+        "email": "marco.vonraumer@unifr.ch",
+        "author": "Paul Maergner, Marco von Raumer",
+        "type": "graph"
+    },
+    "input": [
+        {
+            "file": {
+                "name": "inputImage",
+                "description": "The image to transform",
+                "options": {
+                    "required": true,
+                    "mimeTypes": {
+                        "allowed": [
+                        	"image/jpeg",
+							"image/png",
+							"image/tiff"
+                        ],
+                        "default": "image/png"
+                    }
+                }
+            }
+        },
+        {
+            "outputFolder": {}
+        }
+    ],
+    "output": [
+        {
+            "file": {
+                "name": "imageGraph",
+                "type": "xml",
+                "description": "Resulting graph",
+                "options": {
+                    "visualization":false,
+                    "mimeTypes": {
+                        "allowed": [
+                            "application/xml"
+                        ],
+                        "default": "application/xml"
+                    }
+                }
+            }
+        }
+    ],
+    "method": {
+        "imageType": "docker",
+        "imageName": "marcovr/imagetograph",
+        "testData": "https://dl.dropbox.com/s/7b8ethoqt9a99w8/testData.zip",
+        "executableType": "bash",
+        "executable_path": "script.sh"
+    }
+}

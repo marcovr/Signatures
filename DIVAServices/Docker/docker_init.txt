@@ -1,0 +1,2 @@
+echo -e "networkx==1.11\nnumpy==1.13.3\nmatplotlib==2.0.2\nscipy==0.19.1\npillow==4.3.0\nscikit-image==0.13.1\nPyYAML==3.12\n" > r.txt &&\
+pip3 install --no-cache-dir -r r.txt && rm r.txt
