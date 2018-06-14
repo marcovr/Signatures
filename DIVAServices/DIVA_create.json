@@ -1,0 +1,69 @@
+{
+    "general": {
+        "name": "Graph edit distance",
+        "description": "Calculates graph edit distances",
+        "developer": "Paul Maergner, Marco von Raumer",
+        "affiliation": "University of Fribourg",
+        "email": "marco.vonraumer@unifr.ch",
+        "author": "Paul Maergner, Marco von Raumer",
+        "type": "graph"
+    },
+    "input": [
+        {
+            "file": {
+                "name": "inputData",
+                "description": "The graphs to treat (packed in a zip file)",
+                "options": {
+                    "required": true,
+                    "mimeTypes": {
+                        "allowed": [
+                            "application/zip"
+                        ],
+                        "default": "application/zip"
+                    }
+                }
+            }
+        },
+        {
+            "number": {
+                "name": "numberN",
+                "description": "Amount of reference graphs (0 to N)",
+                "options": {
+                    "required": true,
+                    "default": 2,
+                    "min": 1,
+                    "max": 100,
+                    "steps": 1
+                }
+            }
+        },
+        {
+            "outputFolder": {}
+        }
+    ],
+    "output": [
+        {
+            "file": {
+                "name": "out",
+                "type": "txt",
+                "description": "graph edit distances (ged, saved as txt)",
+                "options": {
+                    "visualization": false,
+                    "mimeTypes": {
+                        "allowed": [
+                            "text/plain"
+                        ],
+                        "default": "text/plain"
+                    }
+                }
+            }
+        }
+    ],
+    "method": {
+        "imageType": "docker",
+        "imageName": "marcovr/gedwrapper",
+        "testData": "https://dl.dropbox.com/s/o351w1det5ehozi/testData.zip",
+        "executableType": "bash",
+        "executable_path": "script.sh"
+    }
+}
