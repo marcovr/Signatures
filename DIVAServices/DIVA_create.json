@@ -1,0 +1,111 @@
+{
+    "general": {
+        "name": "Graph transformation",
+        "description": "Transforms a gxl graph",
+        "developer": "Marco von Raumer",
+        "affiliation": "University of Fribourg",
+        "email": "marco.vonraumer@unifr.ch",
+        "author": "Marco von Raumer",
+        "type": "graph"
+    },
+    "input": [
+        {
+            "file": {
+                "name": "inputGraph",
+                "description": "The graph to transform (gxl, saved as xml)",
+                "options": {
+                    "required": true,
+                    "mimeTypes": {
+                        "allowed": [
+                            "application/xml"
+                        ],
+                        "default": "application/xml"
+                    }
+                }
+            }
+        },
+        {
+            "select": {
+                "name": "keepEdges",
+                "description": "Keep existing edges",
+                "options": {
+                    "required": true,
+                    "values": [
+                        "true",
+                        "false"
+                    ],
+                    "default": 0
+                }
+            }
+        },
+		{
+            "select": {
+                "name": "method",
+                "description": "Transformation method to apply",
+                "options": {
+                    "required": true,
+                    "values": [
+                        "kspan",
+                        "knearest"
+                    ],
+                    "default": 1
+                }
+            }
+        },
+        {
+            "number": {
+                "name": "numberK",
+                "description": "Amount of edges to add per node",
+                "options": {
+                    "required": true,
+                    "default": 2,
+                    "min": 1,
+                    "max": 10,
+                    "steps": 1
+                }
+            }
+        },
+		{
+            "select": {
+                "name": "mergeMode",
+                "description": "kspan only: how to merge node distances",
+                "options": {
+                    "required": true,
+                    "values": [
+                        "minimum",
+                        "average"
+                    ],
+                    "default": 0
+                }
+            }
+        },
+        {
+            "outputFolder": {}
+        }
+    ],
+    "output": [
+        {
+            "file": {
+                "name": "transformed",
+                "type": "xml",
+                "description": "Transformed graph (gxl, saved as xml)",
+                "options": {
+                    "visualization": false,
+                    "mimeTypes": {
+                        "allowed": [
+                            "application/xml"
+                        ],
+                        "default": "application/xml"
+                    }
+                }
+            }
+        }
+    ],
+    "method": {
+        "imageType": "docker",
+        "imageName": "marcovr/graphtransform:1",
+        "testData": "https://dl.dropbox.com/s/gh4o2rhz25z6zqd/testData.zip",
+        "executableType": "bash",
+        "executable_path": "script.sh"
+    }
+}
