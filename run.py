@@ -1,7 +1,7 @@
 import os
 import sys
 import getopt
-import evaluation
+from evaluation import EvaluationData, EvaluationGroup
 
 
 # example: python run.py -r 10 -g 5 data
@@ -37,6 +37,7 @@ def main():
     show_table = False
     plot_dist = plot_det = None
     log = False
+    normalize_graph = False
 
     for opt, arg in opts:
         if opt == '-t':
@@ -71,23 +72,16 @@ def main():
 
     print("processing %s file(s)" % len(files))
 
-    vectors = []
-    ground_truths = []
-    matrices = [evaluation.read_matrix(file) for file in files]
-    for matrix in matrices:
-        vector = evaluation.extract_vector(matrix, reference)
-        vectors.extend(vector)
-        truth = pad_flags(ground_truth, len(vector))
-        ground_truths.extend(truth)
+    data = [EvaluationData(file, reference, ground_truth) for file in files]
+    group = EvaluationGroup(data)
 
-    table = evaluation.create_table(vectors, ground_truths)
-    print(evaluation.get_eer(table))
+    print(group.eer())
 
     if show_table:
         print()
         print("distance", "genuine", "true_positive", "false_positive",
                          "true_pos_rate", "false_pos_rate", "false_neg_rate", sep="\t")
-        for row in table:
+        for row in group.table():
             print(
                 str(row["distance"]),
                 str(row["genuine"]),
@@ -102,9 +96,9 @@ def main():
     if plot_det is not None or plot_dist is not None:
         import plot
         if plot_det is not None:
-            plot.plot_det(table, log, plot_det)
+            plot.plot_det(group.table(), log, plot_det)
         if plot_dist is not None:
-            vectors = [evaluation.extract_vector(matrix, reference, False) for matrix in matrices]
+            vectors = [d.vector(normalize_graph) for d in group.data]
             plot.plot_dist(vectors, ground_truth, plot_dist)
 
 
@@ -114,10 +108,6 @@ def to_indices(flags):
         if v:
             indices.append(i)
     return indices
-
-
-def pad_flags(flags, l):
-    return flags + [0] * (l - len(flags))
 
 
 def expand_dir(dir):

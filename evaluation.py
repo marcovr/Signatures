@@ -1,3 +1,91 @@
+class EvaluationData:
+    def __init__(self, file, references, ground_truth, unverified=None):
+        self.file = file
+        self.references = references
+        self.ground_truth = ground_truth
+        self._unverified = unverified
+        self._matrix = read_matrix(file)
+        self._vector = None
+        self._vector_raw = None
+        self._table = None
+        self._eer = None
+
+        # extract unverified columns
+        if unverified is not None:
+            u = []
+            vector = self.vector()
+            for i in reversed(unverified):
+                u.insert(0, vector.pop(i))
+                for row in self._matrix:
+                    row.pop(i)
+            self._unverified = u
+
+        pad_flags(ground_truth, len(self._matrix[0]) - len(references))
+
+    def matrix(self):
+        return self._matrix
+
+    def vector(self, normalize=True):
+        if normalize:
+            if self._vector is None:
+                self._vector = extract_vector(self.matrix(), self.references)
+            return self._vector
+        else:
+            if self._vector_raw is None:
+                self._vector_raw = extract_vector(self.matrix(), self.references, False)
+            return self._vector_raw
+
+    def table(self):
+        if self._table is None:
+            self._table = create_table(self.vector(), self.ground_truth)
+        return self._table
+
+    def eer(self):
+        if self._eer is None:
+            self._eer = get_eer(self.table())
+        return self._eer
+
+    def verify(self):
+        threshold = get_threshold(self.table())
+        return [x < threshold for x in self._unverified]
+
+
+class EvaluationGroup:
+    def __init__(self, data):
+        self.data = data
+        self.ground_truth = []
+        for d in data:
+            self.ground_truth.extend(d.ground_truth)
+        self._vector = None
+        self._vector_raw = None
+        self._table = None
+        self._eer = None
+
+    def vector(self, normalize=True):
+        if normalize:
+            if self._vector is None:
+                self._vector = []
+                for d in self.data:
+                    self._vector.extend(d.vector())
+            return self._vector
+        else:
+            if self._vector_raw is None:
+                self._vector_raw = []
+                for d in self.data:
+                    self._vector_raw.extend(d.vector(False))
+            return self._vector_raw
+
+    def table(self):
+        if self._table is None:
+            self._table = create_table(self.vector(), self.ground_truth)
+        return self._table
+
+    def eer(self):
+        if self._eer is None:
+            self._eer = get_eer(self.table())
+        return self._eer
+
+
 def read_matrix(file):
     """Read file as matrix."""
     f = open(file, 'r')
@@ -29,11 +117,9 @@ def extract_vector(matrix, references, normalize=True):
             matrix.pop(row)
 
     # move reference columns to front
-    i = 0
-    for col in references:
+    for i, col in enumerate(references):
         for row in matrix:
             row.insert(i, row.pop(col))
-        i += 1
 
     if normalize:
         # calculate user normalization factor
@@ -107,3 +193,19 @@ def get_eer(table):
             fp = row["false_positive"]
             eer = (n_genuine - tp + fp) / n
             return eer
+    return 1
+
+
+def get_threshold(table):
+    """Calculates the threshold value for genuine signatures."""
+    for i, row in enumerate(table):
+        if row["false_neg_rate"] <= row["false_pos_rate"]:
+            if i == 0:
+                return row["distance"]
+            else:
+                return (row["distance"] + table[i - 1]["distance"]) / 2
+    return 0
+
+
+def pad_flags(flags, l):
+    flags.extend([0] * (l - len(flags)))
