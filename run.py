@@ -21,6 +21,8 @@ def usage():
     print("   Notice:  graphs are written to FILE or shown if FILE is ''")
     print("-l          use logarithmic scale (DET curve only)")
     print()
+    print("-v FILE     verify signatures")
+    print()
     print("-t          print evaluation table")
     print()
     print("INPUT       directory containing input files or list of input files")
@@ -28,7 +30,7 @@ def usage():
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'g:G:r:R:p:P:tl')
+        opts, args = getopt.getopt(sys.argv[1:], 'g:G:r:R:p:P:tlv:')
     except getopt.GetoptError:
         usage()
         sys.exit(2)
@@ -38,6 +40,7 @@ def main():
     plot_dist = plot_det = None
     log = False
     normalize_graph = False
+    verify_file = None
 
     for opt, arg in opts:
         if opt == '-t':
@@ -56,6 +59,8 @@ def main():
             plot_det = arg
         elif opt == '-P':
             plot_dist = arg
+        elif opt == '-v':
+            verify_file = arg
         else:
             usage()
             sys.exit(2)
@@ -76,6 +81,12 @@ def main():
     group = EvaluationGroup(data)
 
     print(group.eer())
+
+    if verify_file is not None:
+        if len(group.data) == 1:
+            print(group.data[0].verify(verify_file))
+        else:
+            print("Cannot verify signatures against multiple users.")
 
     if show_table:
         print()

@@ -1,26 +1,18 @@
 class EvaluationData:
-    def __init__(self, file, references, ground_truth, unverified=None):
+    def __init__(self, file, references, ground_truth):
         self.file = file
         self.references = references
         self.ground_truth = ground_truth
-        self._unverified = unverified
         self._matrix = read_matrix(file)
         self._vector = None
         self._vector_raw = None
         self._table = None
         self._eer = None
 
-        # extract unverified columns
-        if unverified is not None:
-            u = []
-            vector = self.vector()
-            for i in reversed(unverified):
-                u.insert(0, vector.pop(i))
-                for row in self._matrix:
-                    row.pop(i)
-            self._unverified = u
-
         pad_flags(ground_truth, len(self._matrix[0]) - len(references))
+        strip_non_ref_rows(self._matrix, references)
+        move_ref_cols_front(self._matrix, references)
+        self.norm = get_norm_factor(self._matrix, references)
 
     def matrix(self):
         return self._matrix
@@ -28,11 +20,11 @@ class EvaluationData:
     def vector(self, normalize=True):
         if normalize:
             if self._vector is None:
-                self._vector = extract_vector(self.matrix(), self.references)
+                self._vector = extract_vector(self.matrix(), self.references, self.norm)
             return self._vector
         else:
             if self._vector_raw is None:
-                self._vector_raw = extract_vector(self.matrix(), self.references, False)
+                self._vector_raw = extract_vector(self.matrix(), self.references)
             return self._vector_raw
 
     def table(self):
@@ -45,9 +37,13 @@ class EvaluationData:
             self._eer = get_eer(self.table())
         return self._eer
 
-    def verify(self):
+    def verify(self, file):
+        u_matrix = read_matrix(file)
+        strip_non_ref_rows(u_matrix, self.references)
+        unverified = extract_vector(u_matrix, [], self.norm)
+
         threshold = get_threshold(self.table())
-        return [x < threshold for x in self._unverified]
+        return [x <= threshold for x in unverified]
 
 
 class EvaluationGroup:
@@ -94,13 +90,44 @@ def read_matrix(file):
     return matrix
 
 
-def extract_vector(matrix, references, normalize=True):
+def strip_non_ref_rows(matrix, references):
+    """Removes non-reference rows."""
+    h = len(matrix)
+
+    for row in reversed(range(0, h)):
+        if row not in references:
+            matrix.pop(row)
+
+
+def move_ref_cols_front(matrix, references):
+    """Reorders columns such that reference columns are first."""
+    for i, col in enumerate(references):
+        for row in matrix:
+            row.insert(i, row.pop(col))
+
+
+def get_norm_factor(matrix, references):
+    """Calculates user normalization factor (average of reference distances)."""
+    n = len(references)
+
+    min_sum = 0
+    for x in range(0, n):
+        minimum = 1
+        for y in range(0, n):
+            # skip distances to self
+            if x != y:
+                minimum = min(minimum, matrix[y][x])
+        min_sum += minimum
+    return min_sum / n
+
+
+def extract_vector(matrix, references, norm=1):
     """
     Creates a distance vector of non-reference signatures to reference ones.
 
     :param matrix: distance matrix
     :param references: list of reference indices
-    :param normalize: normalize values by the average distance (default true)
+    :param norm: user normalization value (default 1)
     :return: distance vector
 
     """
@@ -108,38 +135,11 @@ def extract_vector(matrix, references, normalize=True):
     h = len(matrix)
     n = len(references)
 
-    # deepcopy
-    matrix = [row.copy() for row in matrix]
-
-    # Remove non-reference rows
-    for row in reversed(range(0, h)):
-        if row not in references:
-            matrix.pop(row)
-
-    # move reference columns to front
-    for i, col in enumerate(references):
-        for row in matrix:
-            row.insert(i, row.pop(col))
-
-    if normalize:
-        # calculate user normalization factor
-        min_sum = 0
-        for x in range(0, n):
-            minimum = 1
-            for y in range(0, n):
-                # skip distances to self
-                if x != y:
-                    minimum = min(minimum, matrix[y][x])
-            min_sum += minimum
-        norm = min_sum / n
-    else:
-        norm = 1
-
     # create normalized distance vector
     vector = []
     for x in range(n, w):
         minimum = matrix[0][x] / norm
-        for y in range(1, n):
+        for y in range(1, h):
             minimum = min(minimum, matrix[y][x] / norm)
         vector.append(minimum)
 
@@ -198,12 +198,18 @@ def get_eer(table):
 
 def get_threshold(table):
     """Calculates the threshold value for genuine signatures."""
+    n = len(table)
     for i, row in enumerate(table):
-        if row["false_neg_rate"] <= row["false_pos_rate"]:
+        if row["false_neg_rate"] < row["false_pos_rate"]:
             if i == 0:
                 return row["distance"]
             else:
                 return (row["distance"] + table[i - 1]["distance"]) / 2
+        elif row["false_neg_rate"] == row["false_pos_rate"]:
+            if i == n:
+                return row["distance"]
+            else:
+                return (row["distance"] + table[i + 1]["distance"]) / 2
     return 0
 
 
