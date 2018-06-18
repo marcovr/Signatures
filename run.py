@@ -25,13 +25,14 @@ def usage():
     print("   Notice:  requires the same reference signatures being used.")
     print()
     print("-t          print evaluation table")
+    print("-s          silent mode. Raw results only.")
     print()
     print("INPUT       directory containing input files (GED) or list of input files")
 
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'g:G:r:R:p:P:tlv:')
+        opts, args = getopt.getopt(sys.argv[1:], 'g:G:r:R:p:P:tlv:s')
     except getopt.GetoptError:
         usage()
         sys.exit(2)
@@ -42,6 +43,7 @@ def main():
     log = False
     normalize_graph = False
     verify_file = None
+    silent = False
 
     for opt, arg in opts:
         if opt == '-t':
@@ -62,6 +64,8 @@ def main():
             plot_dist = arg
         elif opt == '-v':
             verify_file = arg
+        elif opt == '-s':
+            silent = True
         else:
             usage()
             sys.exit(2)
@@ -76,21 +80,28 @@ def main():
         if os.path.isdir(file):
             files = expand_dir(file)
 
-    print("processing %s file(s)" % len(files))
+    if not silent:
+        print("processing %s file(s)" % len(files))
 
     data = [EvaluationData(file, reference, ground_truth) for file in files]
     group = EvaluationGroup(data)
 
+    if not silent:
+        print("EER: ", end="")
     print(group.eer())
 
     if verify_file is not None:
         if len(group.data) == 1:
+            if not silent:
+                print("Signature accepted: ", end="")
             print(group.data[0].verify(verify_file))
         else:
             print("Cannot verify signatures against multiple users.")
 
     if show_table:
         print()
+        if not silent:
+            print("Evaluation table:")
         print("distance", "genuine", "true_positive", "false_positive",
                          "true_pos_rate", "false_pos_rate", "false_neg_rate", sep="\t")
         for row in group.table():
@@ -108,8 +119,12 @@ def main():
     if plot_det is not None or plot_dist is not None:
         import plot
         if plot_det is not None:
+            if not silent:
+                print("Plotting DET curve graph")
             plot.plot_det(group.table(), log, plot_det)
         if plot_dist is not None:
+            if not silent:
+                print("Plotting distance vector distribution graph")
             vectors = [d.vector(normalize_graph) for d in group.data]
             plot.plot_dist(vectors, ground_truth, plot_dist)
 
