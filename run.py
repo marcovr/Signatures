@@ -21,11 +21,12 @@ def usage():
     print("   Notice:  graphs are written to FILE or shown if FILE is ''")
     print("-l          use logarithmic scale (DET curve only)")
     print()
-    print("-v FILE     verify signatures")
+    print("-v FILE     verify signatures from GED file.")
+    print("   Notice:  requires the same reference signatures being used.")
     print()
     print("-t          print evaluation table")
     print()
-    print("INPUT       directory containing input files or list of input files")
+    print("INPUT       directory containing input files (GED) or list of input files")
 
 
 def main():

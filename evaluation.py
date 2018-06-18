@@ -1,5 +1,12 @@
 class EvaluationData:
     def __init__(self, file, references, ground_truth):
+        """
+        Creates a new EvaluationData object, which provides different useful methods.
+
+        :param file: path to GED matrix file
+        :param references: list of reference indices
+        :param ground_truth: list of 0 and 1 indicating genuine signatures
+        """
         self.file = file
         self.references = references
         self.ground_truth = ground_truth
@@ -9,15 +16,18 @@ class EvaluationData:
         self._table = None
         self._eer = None
 
+        # preprocess data for further use
         pad_flags(ground_truth, len(self._matrix[0]) - len(references))
         strip_non_ref_rows(self._matrix, references)
         move_ref_cols_front(self._matrix, references)
         self.norm = get_norm_factor(self._matrix, references)
 
     def matrix(self):
+        """returns the preprocessed GED matrix"""
         return self._matrix
 
     def vector(self, normalize=True):
+        """returns the (normalized) distance vector of non-reference signatures to reference ones."""
         if normalize:
             if self._vector is None:
                 self._vector = extract_vector(self.matrix(), self.references, self.norm)
@@ -28,16 +38,28 @@ class EvaluationData:
             return self._vector_raw
 
     def table(self):
+        """
+        Creates a table with each row containing:
+            distance, genuine, true_positive, false_positive, true_pos_rate, false_pos_rate, false_neg_rate
+        """
         if self._table is None:
             self._table = create_table(self.vector(), self.ground_truth)
         return self._table
 
     def eer(self):
+        """Calculates the equal error rate (EER)."""
         if self._eer is None:
             self._eer = get_eer(self.table())
         return self._eer
 
     def verify(self, file):
+        """
+        Verify signatures by comparing GED values against the threshold determined with the EER.
+        Requires the same reference signatures being used.
+
+        :param file: GED matrix file with signatures to verify
+        :return: list of True / False indicating accepted / rejected signatures
+        """
         u_matrix = read_matrix(file)
         strip_non_ref_rows(u_matrix, self.references)
         unverified = extract_vector(u_matrix, [], self.norm)
@@ -48,6 +70,11 @@ class EvaluationData:
 
 class EvaluationGroup:
     def __init__(self, data):
+        """
+        Creates a new EvaluationGroup object, in order to apply methods to a combination of objects.
+
+        :param data: list of EvaluationData objects
+        """
         self.data = data
         self.ground_truth = []
         for d in data:
@@ -58,6 +85,7 @@ class EvaluationGroup:
         self._eer = None
 
     def vector(self, normalize=True):
+        """returns the (normalized) distance vector of the whole group as one."""
         if normalize:
             if self._vector is None:
                 self._vector = []
@@ -72,11 +100,13 @@ class EvaluationGroup:
             return self._vector_raw
 
     def table(self):
+        """Creates the evaluation table for the whole group as one."""
         if self._table is None:
             self._table = create_table(self.vector(), self.ground_truth)
         return self._table
 
     def eer(self):
+        """Calculates the equal error rate for the whole group as one."""
         if self._eer is None:
             self._eer = get_eer(self.table())
         return self._eer
@@ -129,7 +159,6 @@ def extract_vector(matrix, references, norm=1):
     :param references: list of reference indices
     :param norm: user normalization value (default 1)
     :return: distance vector
-
     """
     w = len(matrix[0])
     h = len(matrix)
