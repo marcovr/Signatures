@@ -27,6 +27,7 @@ public class Main {
 
     private static boolean debug;
     private static boolean reorder;
+    private static boolean verification;
 
     /**
      * Main entry point for GEDWrapper.
@@ -39,7 +40,7 @@ public class Main {
         // extract options
         GetOpt g;
         try {
-            g = new GetOpt(args, "r:R:o:fd");
+            g = new GetOpt(args, "r:R:o:fdv");
         } catch (GetOpt.OptException e) {
             usage();
             return;
@@ -62,6 +63,9 @@ public class Main {
                     break;
                 case "-f":
                     reorder = true;
+                    break;
+                case "-v":
+                    verification = true;
                     break;
                 case "-d":
                     debug = true;
@@ -101,6 +105,8 @@ public class Main {
                 "OPTIONS:%n" +
                 "-f          check file names for flags (f / g) to determine correct order.%n" +
                 "            (signatures are rearranged such that genuine ones are first)%n" +
+                "-v          verification mode. Faster, skips pure reference distances.%n" +
+                "            (reference signatures are not compared against each other)%n%n" +
                 "-o FILE     output file path. default is 'out.ged'%n%n" +
                 "INPUT       directory containing graph files or list of graph files%n" +
                 "   Notice:  all files need to be in the same directory and correctly ordered%n");
@@ -146,6 +152,11 @@ public class Main {
 
         // get reference list from indexes
         references = refIndexes.stream().map(files::get).collect(Collectors.toList());
+
+        // skip reference-reference comparisons
+        if (verification) {
+            files.removeAll(references);
+        }
 
         // get data path
         dataDir = files.get(0).getParent();
