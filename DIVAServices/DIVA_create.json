@@ -1,6 +1,6 @@
 {
     "general": {
-        "name": "Image to graph",
+        "name": "Keypoint graph",
         "description": "Transforms an image into a graph",
         "developer": "Paul Maergner, Marco von Raumer",
         "affiliation": "University of Fribourg",
@@ -12,14 +12,15 @@
         {
             "file": {
                 "name": "inputImage",
-                "description": "The image to transform",
+                "description": "The image to transform (or multiple packed in a zip file)",
                 "options": {
                     "required": true,
                     "mimeTypes": {
                         "allowed": [
-                        	"image/jpeg",
-							"image/png",
-							"image/tiff"
+                            "image/jpeg",
+                            "image/png",
+                            "image/tiff",
+                            "application/zip"
                         ],
                         "default": "image/png"
                     }
@@ -35,12 +36,13 @@
             "file": {
                 "name": "imageGraph",
                 "type": "xml",
-                "description": "Resulting graph",
+                "description": "Resulting graph (or multiple packed in a zip file)",
                 "options": {
                     "visualization":false,
                     "mimeTypes": {
                         "allowed": [
                             "application/xml"
+                            "application/zip"
                         ],
                         "default": "application/xml"
                     }
@@ -50,7 +52,7 @@
     ],
     "method": {
         "imageType": "docker",
-        "imageName": "marcovr/imagetograph",
+        "imageName": "marcovr/keypointgraph",
         "testData": "https://dl.dropbox.com/s/7b8ethoqt9a99w8/testData.zip",
         "executableType": "bash",
         "executable_path": "script.sh"
