@@ -12,12 +12,13 @@
         {
             "file": {
                 "name": "inputGraph",
-                "description": "The graph to transform (gxl, saved as xml)",
+                "description": "The graph to transform (gxl, saved as xml or multiple packed in a zip file)",
                 "options": {
                     "required": true,
                     "mimeTypes": {
                         "allowed": [
                             "application/xml"
+                            "application/zip"
                         ],
                         "default": "application/xml"
                     }
@@ -38,7 +39,7 @@
                 }
             }
         },
-		{
+        {
             "select": {
                 "name": "method",
                 "description": "Transformation method to apply",
@@ -65,7 +66,7 @@
                 }
             }
         },
-		{
+        {
             "select": {
                 "name": "mergeMode",
                 "description": "kspan only: how to merge node distances",
@@ -88,12 +89,13 @@
             "file": {
                 "name": "transformed",
                 "type": "xml",
-                "description": "Transformed graph (gxl, saved as xml)",
+                "description": "Transformed graph (gxl, saved as xml or multiple packed in a zip file)",
                 "options": {
                     "visualization": false,
                     "mimeTypes": {
                         "allowed": [
                             "application/xml"
+                            "application/zip"
                         ],
                         "default": "application/xml"
                     }
@@ -103,7 +105,7 @@
     ],
     "method": {
         "imageType": "docker",
-        "imageName": "marcovr/graphtransform:1",
+        "imageName": "marcovr/graphtransform",
         "testData": "https://dl.dropbox.com/s/gh4o2rhz25z6zqd/testData.zip",
         "executableType": "bash",
         "executable_path": "script.sh"

@@ -1,6 +1,6 @@
 FROM anapsix/alpine-java
 MAINTAINER marco.vonraumer@unifr.ch
-RUN apk update && apk add --no-cache curl
+RUN apk update && apk add --no-cache curl zip
 
 RUN mkdir -p /input/
 RUN mkdir -p /output/
