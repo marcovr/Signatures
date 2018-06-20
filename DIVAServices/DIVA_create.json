@@ -38,6 +38,16 @@
             }
         },
         {
+            "checkbox": {
+                "name": "verificationMode",
+                "description": "Faster, skips pure reference distances. (reference graphs are not compared against each other)",
+                "options": {
+                    "required": true,
+                    "default": 0
+                }
+            }
+        },
+        {
             "outputFolder": {}
         }
     ],
