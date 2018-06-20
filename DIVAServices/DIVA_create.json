@@ -18,7 +18,7 @@
                     "mimeTypes": {
                         "allowed": [
                             "text/plain",
-							"application/zip"
+                            "application/zip"
                         ],
                         "default": "text/plain"
                     }
