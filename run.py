@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 import getopt
 from evaluation import EvaluationData, EvaluationGroup
 
@@ -24,7 +25,8 @@ def usage():
     print("-v FILE     verify signatures from GED file.")
     print("   Notice:  requires the same reference signatures being used.")
     print()
-    print("-t          print evaluation table")
+    print("-j FILE     output results to json file.")
+    print("-t          output evaluation table")
     print("-s          silent mode. Raw results only.")
     print()
     print("INPUT       directory containing input files (GED) or list of input files")
@@ -32,7 +34,7 @@ def usage():
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], 'g:G:r:R:p:P:tlv:s')
+        opts, args = getopt.getopt(sys.argv[1:], 'g:G:r:R:p:P:tlv:sj:')
     except getopt.GetoptError:
         usage()
         sys.exit(2)
@@ -42,7 +44,7 @@ def main():
     plot_dist = plot_det = None
     log = False
     normalize_graph = False
-    verify_file = None
+    verify_file = json_file = None
     silent = False
 
     for opt, arg in opts:
@@ -64,6 +66,8 @@ def main():
             plot_dist = arg
         elif opt == '-v':
             verify_file = arg
+        elif opt == '-j':
+            json_file = arg
         elif opt == '-s':
             silent = True
         else:
@@ -85,36 +89,29 @@ def main():
 
     data = [EvaluationData(file, reference, ground_truth) for file in files]
     group = EvaluationGroup(data)
+    results = {}
 
     if not silent:
-        print("EER: ", end="")
-    print(group.eer())
+        print("EER: %s" % group.eer())
+    results["eer"] = group.eer()
 
     if verify_file is not None:
         if len(group.data) == 1:
-            if not silent:
-                print("Signature accepted: ", end="")
-            print(group.data[0].verify(verify_file))
+            results["verified"] = group.data[0].verify(verify_file)
         else:
-            print("Cannot verify signatures against multiple users.")
+            results["verified"] = "Cannot verify signatures against multiple users."
+        if not silent:
+            print("Signature accepted: %s" % results["verified"])
 
     if show_table:
+        results["table"] = group.table()
         print()
         if not silent:
             print("Evaluation table:")
-        print("distance", "genuine", "true_positive", "false_positive",
-                         "true_pos_rate", "false_pos_rate", "false_neg_rate", sep="\t")
-        for row in group.table():
-            print(
-                str(row["distance"]),
-                str(row["genuine"]),
-                str(row["true_positive"]),
-                str(row["false_positive"]),
-                str(row["true_pos_rate"]),
-                str(row["false_pos_rate"]),
-                str(row["false_neg_rate"]),
-                sep="\t"
-            )
+            pretty_print_table(results["table"])
+
+    if json_file is not None:
+        write_json(results, json_file)
 
     if plot_det is not None or plot_dist is not None:
         import plot
@@ -140,6 +137,27 @@ def to_indices(flags):
 def expand_dir(dir):
     files = os.listdir(dir)
     return [os.path.join(dir, f) for f in files]
+
+
+def pretty_print_table(table):
+    print("distance", "genuine", "true_positive", "false_positive",
+          "true_pos_rate", "false_pos_rate", "false_neg_rate", sep="\t")
+    for row in table:
+        print(
+            str(row["distance"]),
+            str(row["genuine"]),
+            str(row["true_positive"]),
+            str(row["false_positive"]),
+            str(row["true_pos_rate"]),
+            str(row["false_pos_rate"]),
+            str(row["false_neg_rate"]),
+            sep="\t"
+        )
+
+
+def write_json(data, file):
+    with open(file, "w") as f:
+        json.dump(data, f, sort_keys=True, indent=4)
 
 
 main()

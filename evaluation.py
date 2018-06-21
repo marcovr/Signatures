@@ -114,9 +114,8 @@ class EvaluationGroup:
 
 def read_matrix(file):
     """Read file as matrix."""
-    f = open(file, 'r')
-    matrix = [[float(x) for x in line.strip().split(' ')] for line in f]
-    f.close()
+    with open(file, 'r') as f:
+        matrix = [[float(x) for x in line.strip().split(' ')] for line in f]
     return matrix
 
 
