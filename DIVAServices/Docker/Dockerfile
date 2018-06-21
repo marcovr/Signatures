@@ -2,6 +2,7 @@ FROM python
 MAINTAINER marco.vonraumer@unifr.ch
 RUN mkdir -p /input/
 RUN mkdir -p /output/
+RUN apt-get update && apt-get install -y zip
 
 COPY script.sh /input/script.sh
 COPY evaluation.py /input/evaluation.py

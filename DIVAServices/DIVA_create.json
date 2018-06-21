@@ -52,22 +52,32 @@
             }
         },
         {
+            "checkbox": {
+                "name": "verification",
+                "description": "Requires 2 input files with same references. Verifies file 2 against file 1 (order is lexicographically determined)",
+                "options": {
+                    "required": true,
+                    "default": 0
+                }
+            }
+        },
+        {
             "outputFolder": {}
         }
     ],
     "output": [
         {
             "file": {
-                "name": "out",
-                "type": "txt",
+                "name": "results",
+                "type": "json",
                 "description": "evaluation results",
                 "options": {
                     "visualization": false,
                     "mimeTypes": {
                         "allowed": [
-                            "text/plain"
+                            "application/json"
                         ],
-                        "default": "text/plain"
+                        "default": "application/json"
                     }
                 }
             }
