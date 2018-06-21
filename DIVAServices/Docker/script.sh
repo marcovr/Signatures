@@ -17,4 +17,4 @@ cd /input/
 mkdir data
 unzip -d data "$inputFile"
 
-java -jar gedwrapper.jar "$v" -fr "$n" -o "$outputFile" data
+java -jar gedwrapper.jar $v -fr "$n" -o "$outputFile" data

@@ -26,7 +26,7 @@ public class GetOpt {
             String arg = argv[i];
 
             // check for option
-            if (arg.charAt(0) != '-') {
+            if (arg.length() == 0 || arg.charAt(0) != '-') {
                 args.add(arg);
                 continue;
             }
