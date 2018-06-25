@@ -1,14 +1,13 @@
 #!/usr/bin/env bash
 inputFile="$1"
-outputFolder="$2"
 outputFile="${2}imageGraph"
 
-cd /input/
+cd /input/ || exit
 
 mkdir data
 mkdir out
 # unzip, if necessary
-if [ "${inputFile: -4}" == ".zip" ]; then
+if [ "${inputFile##*.}" = "zip" ]; then
 	unzip -d data "$inputFile"
 else
 	cp "$inputFile" data
@@ -22,7 +21,7 @@ for inFile in data/*; do
 done
 
 # rezip, if necessary
-if [ "${inputFile: -4}" == ".zip" ]; then
+if [ "${inputFile##*.}" = "zip" ]; then
 	zip -j "${outputFile}.zip" out/*
 else
 	mv out/* "${outputFile}.xml"
