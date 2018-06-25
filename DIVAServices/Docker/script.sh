@@ -6,13 +6,13 @@ outputFile="${4}out.txt"
 
 # v=0 -> don't apply -v option
 # v=1 -> apply -v option
-if [ "$v" == "0" ]; then
+if [ "$v" = "0" ]; then
 	v=""
 else
 	v="-v"
 fi
 
-cd /input/
+cd /input/ || exit
 
 mkdir data
 unzip -d data "$inputFile"
