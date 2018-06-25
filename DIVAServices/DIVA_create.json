@@ -12,7 +12,7 @@
         {
             "file": {
                 "name": "inputData",
-                "description": "The graphs to treat (packed in a zip file)",
+                "description": "The graphs to treat (packed in a zip file). WARNING: any uploaded files can be publically accessed! Do not upload any graphs (signatures) without permission!",
                 "options": {
                     "required": true,
                     "mimeTypes": {
