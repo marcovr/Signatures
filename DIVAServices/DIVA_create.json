@@ -12,7 +12,7 @@
         {
             "file": {
                 "name": "inputGraph",
-                "description": "The graph to transform (gxl, saved as xml or multiple packed in a zip file)",
+                "description": "The graph to transform (gxl, saved as xml or multiple packed in a zip file). WARNING: any uploaded files can be publically accessed! Do not upload any graphs (signatures) without permission!",
                 "options": {
                     "required": true,
                     "mimeTypes": {
