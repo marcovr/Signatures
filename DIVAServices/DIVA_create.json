@@ -12,7 +12,7 @@
         {
             "file": {
                 "name": "inputImage",
-                "description": "The image to transform (or multiple packed in a zip file)",
+                "description": "The image to transform (or multiple packed in a zip file). WARNING: any uploaded files can be publically accessed! Do not upload any images (signatures) without permission!",
                 "options": {
                     "required": true,
                     "mimeTypes": {
