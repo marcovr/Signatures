@@ -147,7 +147,12 @@ public class Main {
             ordered.addAll(files.stream()
                     .filter(f -> Util.baseName(f).indexOf('f') >= 0)
                     .collect(Collectors.toList()));
-            files = ordered;
+            if (ordered.size() < files.size()) {
+                System.out.println("Not applying filter (-f) since some filenames don't contain a flag");
+            }
+            else {
+                files = ordered;
+            }
         }
 
         // get reference list from indexes
