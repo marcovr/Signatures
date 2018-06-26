@@ -17,7 +17,7 @@
                     "required": true,
                     "mimeTypes": {
                         "allowed": [
-                            "application/xml"
+                            "application/xml",
                             "application/zip"
                         ],
                         "default": "application/xml"
@@ -94,7 +94,7 @@
                     "visualization": false,
                     "mimeTypes": {
                         "allowed": [
-                            "application/xml"
+                            "application/xml",
                             "application/zip"
                         ],
                         "default": "application/xml"
@@ -108,6 +108,6 @@
         "imageName": "marcovr/graphtransform",
         "testData": "https://dl.dropbox.com/s/gh4o2rhz25z6zqd/testData.zip",
         "executableType": "bash",
-        "executable_path": "script.sh"
+        "executable_path": "/input/script.sh"
     }
 }
