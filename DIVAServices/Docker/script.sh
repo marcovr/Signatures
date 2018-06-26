@@ -12,9 +12,9 @@ mkdir data
 if [ "${inputFile##*.}" = "zip" ]; then
 	unzip -d data "$inputFile"
 
-	# v=0 -> don't apply -v option
-	# v=1 -> apply -v option
-	if [ "$v" != "0" ]; then
+	# v=false -> don't apply -v option
+	# v=true -> apply -v option
+	if [ "$v" = "true" ]; then
 		mkdir verify
 		for last_file in data/*; do true; done
 		v_name=$(basename "$last_file")

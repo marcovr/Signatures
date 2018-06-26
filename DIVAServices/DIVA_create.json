@@ -52,11 +52,15 @@
             }
         },
         {
-            "checkbox": {
+            "select": {
                 "name": "verification",
                 "description": "Requires 2 input files with same references. Verifies file 2 against file 1 (order is lexicographically determined)",
                 "options": {
                     "required": true,
+                    "values": [
+                        "false",
+                        "true"
+                    ],
                     "default": 0
                 }
             }
