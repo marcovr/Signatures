@@ -88,6 +88,6 @@
         "imageName": "marcovr/sigevaluation",
         "testData": "https://dl.dropbox.com/s/fb8ie5wtpx0hlfc/testData.zip",
         "executableType": "bash",
-        "executable_path": "script.sh"
+        "executable_path": "/input/script.sh"
     }
 }
