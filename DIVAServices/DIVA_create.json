@@ -41,7 +41,7 @@
                     "visualization":false,
                     "mimeTypes": {
                         "allowed": [
-                            "application/xml"
+                            "application/xml",
                             "application/zip"
                         ],
                         "default": "application/xml"
@@ -55,6 +55,6 @@
         "imageName": "marcovr/keypointgraph",
         "testData": "https://dl.dropbox.com/s/7b8ethoqt9a99w8/testData.zip",
         "executableType": "bash",
-        "executable_path": "script.sh"
+        "executable_path": "/input/script.sh"
     }
 }
