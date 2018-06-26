@@ -3,7 +3,7 @@ inputFile="$1"
 n="$2"
 s="$3"
 v="$4"
-outputFile="${5}out.txt"
+outputFile="${5}out.csv"
 
 # v=false -> don't apply -v option
 # v=true -> apply -v option

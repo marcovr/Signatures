@@ -73,15 +73,15 @@
         {
             "file": {
                 "name": "out",
-                "type": "txt",
-                "description": "graph edit distances (ged, saved as txt)",
+                "type": "csv",
+                "description": "graph edit distances (ged, saved as csv)",
                 "options": {
                     "visualization": false,
                     "mimeTypes": {
                         "allowed": [
-                            "text/plain"
+                            "text/csv"
                         ],
-                        "default": "text/plain"
+                        "default": "text/csv"
                     }
                 }
             }
