@@ -38,21 +38,29 @@
             }
         },
         {
-            "checkbox": {
+            "select": {
                 "name": "sortMode",
                 "description": "check file names for flags (f / g) to determine correct order. (signatures are rearranged such that genuine ones are first)",
                 "options": {
                     "required": true,
+                    "values": [
+                        "false",
+                        "true"
+                    ],
                     "default": 1
                 }
             }
         },
         {
-            "checkbox": {
+            "select": {
                 "name": "verificationMode",
                 "description": "Faster, skips pure reference distances. (reference graphs are not compared against each other)",
                 "options": {
                     "required": true,
+                    "values": [
+                        "false",
+                        "true"
+                    ],
                     "default": 0
                 }
             }

@@ -5,17 +5,17 @@ s="$3"
 v="$4"
 outputFile="${5}out.txt"
 
-# v=0 -> don't apply -v option
-# v=1 -> apply -v option
-if [ "$v" = "0" ]; then
+# v=false -> don't apply -v option
+# v=true -> apply -v option
+if [ "$v" = "false" ]; then
 	v=""
 else
 	v="-v"
 fi
 
-# s=0 -> don't apply -f option
-# s=1 -> apply -f option
-if [ "$s" = "0" ]; then
+# s=false -> don't apply -f option
+# s=true -> apply -f option
+if [ "$s" = "false" ]; then
 	f=""
 else
 	f="-f"
