@@ -84,6 +84,6 @@
         "imageName": "marcovr/gedwrapper",
         "testData": "https://dl.dropbox.com/s/o351w1det5ehozi/testData.zip",
         "executableType": "bash",
-        "executable_path": "script.sh"
+        "executable_path": "/input/script.sh"
     }
 }
