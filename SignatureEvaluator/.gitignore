@@ -1,0 +1,16 @@
+# PyCharm
+.idea/
+
+# Python
+venv/
+__pycache__/
+
+# gxl files
+*.gxl
+
+data/
+*.png
+
+*.zip
+!Dockerfile*
+**/Docker/*.py
