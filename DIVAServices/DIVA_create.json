@@ -1,0 +1,97 @@
+{
+    "general": {
+        "name": "Graph edit distance",
+        "description": "Calculates graph edit distances",
+        "developer": "Paul Maergner, Marco von Raumer",
+        "affiliation": "University of Fribourg",
+        "email": "marco.vonraumer@unifr.ch",
+        "author": "Paul Maergner, Marco von Raumer",
+        "type": "graph"
+    },
+    "input": [
+        {
+            "file": {
+                "name": "inputData",
+                "description": "The graphs to treat (packed in a zip file). WARNING: any uploaded files can be publically accessed! Do not upload any graphs (signatures) without permission!",
+                "options": {
+                    "required": true,
+                    "mimeTypes": {
+                        "allowed": [
+                            "application/zip"
+                        ],
+                        "default": "application/zip"
+                    }
+                }
+            }
+        },
+        {
+            "number": {
+                "name": "numberN",
+                "description": "Amount of reference graphs (0 to N)",
+                "options": {
+                    "required": true,
+                    "default": 2,
+                    "min": 1,
+                    "max": 100,
+                    "steps": 1
+                }
+            }
+        },
+        {
+            "select": {
+                "name": "sortMode",
+                "description": "check file names for flags (f / g) to determine correct order. (signatures are rearranged such that genuine ones are first)",
+                "options": {
+                    "required": true,
+                    "values": [
+                        "false",
+                        "true"
+                    ],
+                    "default": 1
+                }
+            }
+        },
+        {
+            "select": {
+                "name": "verificationMode",
+                "description": "Faster, skips pure reference distances. (reference graphs are not compared against each other)",
+                "options": {
+                    "required": true,
+                    "values": [
+                        "false",
+                        "true"
+                    ],
+                    "default": 0
+                }
+            }
+        },
+        {
+            "outputFolder": {}
+        }
+    ],
+    "output": [
+        {
+            "file": {
+                "name": "out",
+                "type": "csv",
+                "description": "graph edit distances (ged, saved as csv)",
+                "options": {
+                    "visualization": false,
+                    "mimeTypes": {
+                        "allowed": [
+                            "text/csv"
+                        ],
+                        "default": "text/csv"
+                    }
+                }
+            }
+        }
+    ],
+    "method": {
+        "imageType": "docker",
+        "imageName": "marcovr/gedwrapper",
+        "testData": "https://dl.dropbox.com/s/o351w1det5ehozi/testData.zip",
+        "executableType": "bash",
+        "executable_path": "/input/script.sh"
+    }
+}
