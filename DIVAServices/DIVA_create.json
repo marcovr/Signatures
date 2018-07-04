@@ -1,0 +1,97 @@
+{
+    "general": {
+        "name": "Signature evaluation",
+        "description": "Calculates graph edit distances",
+        "developer": "Paul Maergner, Marco von Raumer",
+        "affiliation": "University of Fribourg",
+        "email": "marco.vonraumer@unifr.ch",
+        "author": "Paul Maergner, Marco von Raumer",
+        "type": "graph"
+    },
+    "input": [
+        {
+            "file": {
+                "name": "inputData",
+                "description": "The ged files to evaluate (single txt or multiple packed in a zip file)",
+                "options": {
+                    "required": true,
+                    "mimeTypes": {
+                        "allowed": [
+                            "text/plain",
+                            "application/zip"
+                        ],
+                        "default": "text/plain"
+                    }
+                }
+            }
+        },
+        {
+            "number": {
+                "name": "numberR",
+                "description": "Amount of reference signatures (0 to N)",
+                "options": {
+                    "required": true,
+                    "default": 2,
+                    "min": 1,
+                    "max": 100,
+                    "steps": 1
+                }
+            }
+        },
+        {
+            "number": {
+                "name": "numberG",
+                "description": "Amount of genuine signatures (0 to N). Notice: only non-reference signatures are considered",
+                "options": {
+                    "required": true,
+                    "default": 2,
+                    "min": 1,
+                    "max": 100,
+                    "steps": 1
+                }
+            }
+        },
+        {
+            "select": {
+                "name": "verification",
+                "description": "Requires 2 input files with same references. Verifies file 2 against file 1 (order is lexicographically determined)",
+                "options": {
+                    "required": true,
+                    "values": [
+                        "false",
+                        "true"
+                    ],
+                    "default": 0
+                }
+            }
+        },
+        {
+            "outputFolder": {}
+        }
+    ],
+    "output": [
+        {
+            "file": {
+                "name": "results",
+                "type": "json",
+                "description": "evaluation results",
+                "options": {
+                    "visualization": false,
+                    "mimeTypes": {
+                        "allowed": [
+                            "application/json"
+                        ],
+                        "default": "application/json"
+                    }
+                }
+            }
+        }
+    ],
+    "method": {
+        "imageType": "docker",
+        "imageName": "marcovr/sigevaluation",
+        "testData": "https://dl.dropbox.com/s/fb8ie5wtpx0hlfc/testData.zip",
+        "executableType": "bash",
+        "executable_path": "/input/script.sh"
+    }
+}
