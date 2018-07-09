@@ -64,6 +64,18 @@ public class ResultsGUI {
         }
     }
 
+    public void selectNone(int user) {
+        userList.setSelectedIndex(user);
+        transformList.setSelectedIndex(0);
+    }
+
+    public void select(int user, int transform, boolean keepEdges, int k) {
+        userList.setSelectedIndex(user);
+        transformList.setSelectedIndex(transform);
+        keepEdgesCheckBox.setSelected(keepEdges);
+        kSpinner.setValue(k);
+    }
+
     private void setSigList(User user) {
         int i = sigList.getSelectedIndex();
         sigListModel.removeAllElements();

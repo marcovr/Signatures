@@ -2,17 +2,22 @@ package ch.unifr.marcovr.ResultsAnalyzer;
 
 import ch.unifr.marcovr.GraphTransformer.gxl.GxlParser;
 import ch.unifr.marcovr.ResultsAnalyzer.UI.ResultsGUI;
+import ch.unifr.marcovr.ResultsAnalyzer.UI.TableGUI;
 
 import javax.swing.*;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Main {
 
@@ -43,7 +48,36 @@ public class Main {
 
         ResultsGUI gui = new ResultsGUI();
         gui.show();
+
+        TableGUI t_gui = new TableGUI(gui);
+        loadResults(t_gui);
+        t_gui.show();
+
         loadFiles(gxlPath, gui);
+    }
+
+    private static void loadResults(TableGUI gui) {
+        Path resultsFile = Paths.get("D:\\OneDrive\\Marco\\UniFr\\6. Semester\\BA\\Results\\results.txt");
+        try (Stream<String> stream = Files.lines(resultsFile)) {
+            List<String> lines = stream.collect(Collectors.toList());
+            String[] header = lines.get(1).split("\t");
+            header = Arrays.copyOfRange(header, 1, header.length);
+
+            Stream<String[]> data = lines.stream().skip(2).map(l -> l.split("\t"));
+            EER[][] eers = data.map(r -> {
+                float original = Float.parseFloat(r[1]);
+                return Arrays.stream(r).skip(1).map(x -> {
+                    EER e = new EER();
+                    e.eer = x;
+                    e.status = Float.compare(Float.parseFloat(x), original);
+                    return e;
+                }).toArray(EER[]::new);
+            }).toArray(EER[][]::new);
+            gui.setData(eers, header);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void loadFiles(Path gxlPath, ResultsGUI gui) {
@@ -58,6 +92,7 @@ public class Main {
 
         List<Path> finalGraphFiles = graphFiles;
 
+        List<User> users = new ArrayList<>();
         for (int i = 0; i < N_USERS; i++) {
             User user = new User();
             int n = N_SIGS * i;
@@ -79,6 +114,7 @@ public class Main {
             user.signatures.removeAll(forgeries);
             user.signatures.addAll(forgeries);
 
+            users.add(user);
             gui.addUser(user);
         }
     }
