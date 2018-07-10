@@ -7,9 +7,7 @@ import ch.unifr.marcovr.ResultsAnalyzer.UI.TableGUI;
 import javax.swing.*;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -56,10 +54,11 @@ public class Main {
         loadFiles(gxlPath, gui);
     }
 
-    private static void loadResults(TableGUI gui) {
-        Path resultsFile = Paths.get("D:\\OneDrive\\Marco\\UniFr\\6. Semester\\BA\\Results\\results.txt");
-        try (Stream<String> stream = Files.lines(resultsFile)) {
-            List<String> lines = stream.collect(Collectors.toList());
+    private static void loadResults(ResultsGUI gui) {
+        try (InputStream in = Main.class.getResourceAsStream("/results.txt")) {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            List<String> lines = reader.lines().collect(Collectors.toList());
+
             String[] header = lines.get(1).split("\t");
             header = Arrays.copyOfRange(header, 1, header.length);
 
@@ -92,7 +91,6 @@ public class Main {
 
         List<Path> finalGraphFiles = graphFiles;
 
-        List<User> users = new ArrayList<>();
         for (int i = 0; i < N_USERS; i++) {
             User user = new User();
             int n = N_SIGS * i;
@@ -114,7 +112,6 @@ public class Main {
             user.signatures.removeAll(forgeries);
             user.signatures.addAll(forgeries);
 
-            users.add(user);
             gui.addUser(user);
         }
     }
