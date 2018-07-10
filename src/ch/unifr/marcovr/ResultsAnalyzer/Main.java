@@ -2,7 +2,6 @@ package ch.unifr.marcovr.ResultsAnalyzer;
 
 import ch.unifr.marcovr.GraphTransformer.gxl.GxlParser;
 import ch.unifr.marcovr.ResultsAnalyzer.UI.ResultsGUI;
-import ch.unifr.marcovr.ResultsAnalyzer.UI.TableGUI;
 
 import javax.swing.*;
 import javax.xml.bind.JAXBException;
@@ -47,10 +46,7 @@ public class Main {
         ResultsGUI gui = new ResultsGUI();
         gui.show();
 
-        TableGUI t_gui = new TableGUI(gui);
-        loadResults(t_gui);
-        t_gui.show();
-
+        loadResults(gui);
         loadFiles(gxlPath, gui);
     }
 
@@ -113,6 +109,7 @@ public class Main {
             user.signatures.addAll(forgeries);
 
             gui.addUser(user);
+            gui.setProgress(i * 100 / (N_USERS - 1));
         }
     }
 }
