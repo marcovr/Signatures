@@ -32,13 +32,14 @@ public class GraphPanel extends JPanel {
     }
 
     public void setGxl(GxlRoot gxl) {
+        gxl_original = gxl;
+
         if (gxl == null) {
             this.gxl = null;
             repaint();
             return;
         }
 
-        gxl_original = gxl;
         Transformer transformer = new Transformer(gxl);
 
         switch (transform) {
