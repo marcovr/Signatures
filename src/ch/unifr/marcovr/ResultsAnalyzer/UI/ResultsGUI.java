@@ -114,7 +114,34 @@ public class ResultsGUI {
         }
     }
 
-    public void addData(Object[][] data, String[] header) {
+    public void addData(Object[][] data) {
+
+        String[] header = new String[data[0].length];
+        for (int i = 0; i < header.length; i++) {
+            switch (i) {
+                case 0:
+                    header[i] = "original";
+                    break;
+                case 1: case 2: case 3: case 4: case 5: case 6: case 7: case 8:
+                    header[i] = "nk " + i;
+                    break;
+                case 9: case 10: case 11: case 12: case 13: case 14: case 15: case 16:
+                    header[i] = "nr " + (i - 8);
+                    break;
+                case 17: case 18: case 19:
+                    header[i] = "sak " + (i - 16);
+                    break;
+                case 20: case 21: case 22:
+                    header[i] = "sar " + (i - 19);
+                    break;
+                case 23: case 24: case 25:
+                    header[i] = "smk " + (i - 22);
+                    break;
+                default:
+                    header[i] = "smr " + (i - 25);
+            }
+        }
+
         dataModels.add(new NonEditableModel(data, header));
     }
 

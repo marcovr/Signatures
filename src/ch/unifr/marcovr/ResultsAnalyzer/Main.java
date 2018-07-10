@@ -54,12 +54,7 @@ public class Main {
     private static void loadResults(String file, ResultsGUI gui) {
         try (InputStream in = Main.class.getResourceAsStream(file)) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-            List<String> lines = reader.lines().collect(Collectors.toList());
-
-            String[] header = lines.get(1).split("\t");
-            header = Arrays.copyOfRange(header, 1, header.length);
-
-            Stream<String[]> data = lines.stream().skip(2).map(l -> l.split("\t"));
+            Stream<String[]> data = reader.lines().skip(2).map(l -> l.split("\t"));
             EER[][] eers = data.map(r -> {
                 float original = Float.parseFloat(r[1]);
                 return Arrays.stream(r).skip(1).map(x -> {
@@ -69,7 +64,7 @@ public class Main {
                     return e;
                 }).toArray(EER[]::new);
             }).toArray(EER[][]::new);
-            gui.addData(eers, header);
+            gui.addData(eers);
 
         } catch (IOException e) {
             e.printStackTrace();
