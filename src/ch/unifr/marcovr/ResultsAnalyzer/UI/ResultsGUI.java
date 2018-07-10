@@ -10,6 +10,8 @@ import javax.swing.event.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.util.ArrayList;
 
 public class ResultsGUI {
     private JList userList;
@@ -25,10 +27,13 @@ public class ResultsGUI {
     private JTable dataTable;
     private JProgressBar progressBar;
     private JSplitPane splitPane;
+    private JComboBox layoutComboBox;
+    private JScrollPane userScrollPane;
 
     private DefaultListModel<User> userListModel;
     private DefaultListModel<Signature> sigListModel;
-    private int pendingSelection = -1;
+    private int pendingSelection = 0;
+    private ArrayList<NonEditableModel> dataModels = new ArrayList<>();
 
     public ResultsGUI() {
         userList.addListSelectionListener(e -> {
@@ -75,6 +80,14 @@ public class ResultsGUI {
         tableScrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, rowTable.getTableHeader());
 
         dataTable.setDefaultRenderer(Object.class, new StatusColumnCellRenderer());
+
+        layoutComboBox.addItemListener(e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                setMode(layoutComboBox.getSelectedIndex());
+            }
+        });
+
+        setMode(0);
     }
 
     public void show() {
@@ -101,8 +114,36 @@ public class ResultsGUI {
         }
     }
 
-    public void setData(Object[][] data, String[] header) {
-        dataTable.setModel(new NonEditableModel(data, header));
+    public void addData(Object[][] data, String[] header) {
+        dataModels.add(new NonEditableModel(data, header));
+    }
+
+    private void setMode(int mode) {
+        if (mode < 1) {
+            tableScrollPane.setVisible(false);
+            userScrollPane.setVisible(true);
+            splitPane.setEnabled(false);
+            splitPane.setResizeWeight(0);
+            splitPane.setDividerLocation(splitPane.getLeftComponent().getMinimumSize().width);
+
+            transformList.setEnabled(true);
+            keepEdgesCheckBox.setEnabled(true);
+            kSpinner.setEnabled(true);
+        }
+        else {
+            tableScrollPane.setVisible(true);
+            userScrollPane.setVisible(false);
+            splitPane.setEnabled(true);
+            splitPane.setResizeWeight(0.5);
+            splitPane.setDividerLocation(contentPanel.getWidth() / 2);
+
+            transformList.setEnabled(false);
+            keepEdgesCheckBox.setEnabled(false);
+            kSpinner.setEnabled(false);
+
+            dataTable.setModel(dataModels.get(mode - 1));
+        }
+        splitPane.revalidate();
     }
 
     private void selectNone(int user) {
@@ -141,6 +182,7 @@ public class ResultsGUI {
         else {
             sigList.clearSelection();
         }
+        sigList.repaint();
     }
 
     private void createUIComponents() {

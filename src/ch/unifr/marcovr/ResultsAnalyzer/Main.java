@@ -46,12 +46,13 @@ public class Main {
         ResultsGUI gui = new ResultsGUI();
         gui.show();
 
-        loadResults(gui);
+        loadResults("/results_r10_g5.txt", gui);
+        loadResults("/results_r5_g10.txt", gui);
         loadFiles(gxlPath, gui);
     }
 
-    private static void loadResults(ResultsGUI gui) {
-        try (InputStream in = Main.class.getResourceAsStream("/results.txt")) {
+    private static void loadResults(String file, ResultsGUI gui) {
+        try (InputStream in = Main.class.getResourceAsStream(file)) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
             List<String> lines = reader.lines().collect(Collectors.toList());
 
@@ -68,7 +69,7 @@ public class Main {
                     return e;
                 }).toArray(EER[]::new);
             }).toArray(EER[][]::new);
-            gui.setData(eers, header);
+            gui.addData(eers, header);
 
         } catch (IOException e) {
             e.printStackTrace();
