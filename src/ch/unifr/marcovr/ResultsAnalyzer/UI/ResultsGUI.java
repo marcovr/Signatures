@@ -91,7 +91,7 @@ public class ResultsGUI {
     }
 
     public void show() {
-        JFrame frame = new JFrame("GXL-D25 Transformation Results Visualizer");
+        JFrame frame = new JFrame("GXL-MCYT-75 Transformation Results Visualizer");
         frame.setContentPane(contentPanel);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setMinimumSize(new Dimension(400, 200));

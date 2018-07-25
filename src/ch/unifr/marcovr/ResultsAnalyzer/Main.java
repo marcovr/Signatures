@@ -32,7 +32,7 @@ public class Main {
         }
 
         if (!Files.isDirectory(gxlPath)) {
-            System.err.println("please provide the path to the gxl-D25 files as first argument");
+            System.err.println("please provide the path to the gxl-MCYT-75 files as first argument");
             System.exit(1);
         }
 
