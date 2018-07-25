@@ -215,7 +215,7 @@ public class ResultsGUI {
     private void createUIComponents() {
         userList = new JList<>(userListModel = new DefaultListModel<>());
         sigList = new JList<>(sigListModel = new DefaultListModel<>());
-        kSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 8, 1));
+        kSpinner = new JSpinner(new SpinnerNumberModel(1, 0, 8, 1));
     }
 
     private class TableSelectionListener implements ListSelectionListener, TableColumnModelListener {
@@ -226,7 +226,7 @@ public class ResultsGUI {
             int user = dataTable.getSelectedRow();
             int column = dataTable.getSelectedColumn();
 
-            if (user == prevUser && column == prevCol) {
+            if (user == prevUser && column == prevCol || user < 0 || column < 0) {
                 return;
             }
             prevUser = user;
