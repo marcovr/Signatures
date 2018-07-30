@@ -19,11 +19,13 @@ public class GxlVisualizer {
     private static final double PADDING_PERCENT = 0.05;
     private static final double RADIUS_PERCENT = 0.004;
 
-    private final Graph graph;
+    private Graph graph;
     private int radius = 3;
     private double scale, offsetX, offsetY;
 
-    private GxlVisualizer(GxlRoot gxl) {
+    public GxlVisualizer() {}
+
+    public GxlVisualizer(GxlRoot gxl) {
         graph = gxl.getGraph();
     }
 
@@ -99,7 +101,7 @@ public class GxlVisualizer {
      * @param width  size of image
      * @param height size of image
      */
-    private void paintImage(Graphics2D g, int width, int height) {
+    public void paintImage(Graphics2D g, int width, int height) {
         calculateNormalisation(width, height);
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
@@ -121,6 +123,19 @@ public class GxlVisualizer {
             g.drawLine(from.x, from.y, to.x, to.y);
         }
 
+    }
+
+    /**
+     * Paints the stored graph using the provided graphics object.
+     *
+     * @param gxl    gxl object to visualize
+     * @param g      graphics object to paint with
+     * @param width  size of image
+     * @param height size of image
+     */
+    public void paintImage(GxlRoot gxl, Graphics2D g, int width, int height) {
+        graph = gxl.getGraph();
+        paintImage(g, width, height);
     }
 
     /**
