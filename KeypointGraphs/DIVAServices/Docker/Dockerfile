@@ -12,5 +12,5 @@ COPY run.py /input/run.py
 
 RUN rm -rf /tmp/* /var/tmp/* .git
 WORKDIR /input
-RUN chmod +x *
+RUN chmod -R 777 /input/
 CMD ["/input/script.sh"]

@@ -12,5 +12,5 @@ COPY default.prop /input/default.prop
 
 RUN rm -rf /tmp/* /var/tmp/* .git /var/cache/apk/*
 WORKDIR /input
-RUN chmod +x *
+RUN chmod -R 777 /input/
 CMD ["/input/script.sh"]
