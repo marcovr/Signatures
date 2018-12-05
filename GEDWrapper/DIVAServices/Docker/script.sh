@@ -1,24 +1,33 @@
 #!/usr/bin/env bash
 inputFile="$1"
-n="$2"
-s="$3"
-v="$4"
-outputFile="${5}out.csv"
+nReference="$2"
+sortMode="$3"
+verificationMode="$4"
+nodeCost="$5"
+edgeCost="$6"
+useEdgeLength="$7"
+outputFile="${8}out.csv"
 
-# v=false -> don't apply -v option
-# v=true -> apply -v option
-if [ "$v" = "false" ]; then
-	v=""
+# verificationMode=false -> don't apply -v option
+# verificationMode=true -> apply -v option
+if [ "$verificationMode" = "false" ]; then
+	verificationMode=""
 else
-	v="-v"
+	verificationMode="-v"
 fi
 
-# s=false -> don't apply -f option
-# s=true -> apply -f option
-if [ "$s" = "false" ]; then
-	f=""
+# sortMode=false -> don't apply -f option
+# sortMode=true -> apply -f option
+if [ "$sortMode" = "false" ]; then
+	sortMode=""
 else
-	f="-f"
+	sortMode="-f"
+fi
+
+if [ "$useEdgeLength" = "false" ]; then
+	edgeLabel="numOfEdgeAttr=0"
+else
+	edgeLabel="numOfEdgeAttr=1\\nedgeAttr0=length\\nedgeAttr0Importance=1\\nedgeCostType0=absolute"
 fi
 
 cd /input/ || exit
@@ -26,4 +35,11 @@ cd /input/ || exit
 mkdir data
 unzip -d data "$inputFile"
 
-java -jar gedwrapper.jar $v $f -r "$n" -o "$outputFile" data
+# apply cost function
+sed -i -e 's/$NODECOST/node='"$nodeCost"'/' \
+	-e 's/$EDGECOST/edge='"$edgeCost"'/' \
+	-e 's/$EDGELABEL/'"$edgeLabel"'/' \
+	default.prop
+
+java -jar gedwrapper.jar $verificationMode $sortMode \
+	-r "$nReference" -o "$outputFile" data

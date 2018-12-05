@@ -26,7 +26,7 @@
         },
         {
             "number": {
-                "name": "numberN",
+                "name": "nReference",
                 "description": "Amount of reference graphs (0 to N)",
                 "options": {
                     "required": true,
@@ -55,6 +55,46 @@
             "select": {
                 "name": "verificationMode",
                 "description": "Faster, skips pure reference distances. (reference graphs are not compared against each other)",
+                "options": {
+                    "required": true,
+                    "values": [
+                        "false",
+                        "true"
+                    ],
+                    "default": 0
+                }
+            }
+        },
+        {
+            "number": {
+                "name": "nodeCost",
+                "description": "Cost of node modification operations",
+                "options": {
+                    "required": true,
+                    "default": 1,
+                    "min": -1000000000,
+                    "max": 1000000000,
+                    "steps": 1
+                }
+            }
+        },
+        {
+            "number": {
+                "name": "edgeCost",
+                "description": "Cost of edge modification operations",
+                "options": {
+                    "required": true,
+                    "default": 2,
+                    "min": -1000000000,
+                    "max": 1000000000,
+                    "steps": 1
+                }
+            }
+        },
+        {
+            "select": {
+                "name": "useEdgeLength",
+                "description": "Respects the edge label 'length' during GED calculation.",
                 "options": {
                     "required": true,
                     "values": [

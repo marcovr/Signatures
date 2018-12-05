@@ -7,8 +7,8 @@ $PATHS
 
 # parameters
 norm=center
-node=1
-edge=2
+$NODECOST
+$EDGECOST
 alpha=0.5
 
 # debug output
@@ -30,7 +30,7 @@ pNode=2
 
 # edge cost function
 undirected=1
-numOfEdgeAttr=0
+$EDGELABEL
 multiplyEdgeCosts=0
 pEdge=1
 
